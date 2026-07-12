@@ -45,9 +45,9 @@ export default function LoginPage() {
 
     // Client-side validation
     if (authMode === 'register') {
-      const usernameRegex = /^[a-zA-Z0-9_]+$/;
+      const usernameRegex = /^[a-zA-Z0-9_.]{3,20}$/;
       if (!usernameRegex.test(username)) {
-        setErrorMsg('Username must contain only letters, numbers, and underscores (no spaces).');
+        setErrorMsg('Username must be 3-20 characters long and contain only letters, numbers, underscores, and dots (no spaces).');
         return;
       }
       
@@ -58,7 +58,13 @@ export default function LoginPage() {
       
       const hasNumber = /\d/.test(password);
       if (!hasNumber) {
-        setErrorMsg('Password must contain at least one numeral.');
+        setErrorMsg('Password must contain at least one number.');
+        return;
+      }
+
+      const hasLowercase = /[a-z]/.test(password);
+      if (!hasLowercase) {
+        setErrorMsg('Password must contain at least one lowercase letter.');
         return;
       }
     }

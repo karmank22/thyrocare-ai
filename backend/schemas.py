@@ -11,8 +11,8 @@ class UserCreate(BaseModel):
     @field_validator('username')
     @classmethod
     def validate_username(cls, v):
-        if not re.match(r"^[a-zA-Z0-9_]+$", v):
-            raise ValueError('Username must contain only letters, numbers, and underscores (no spaces)')
+        if not re.match(r"^[a-zA-Z0-9_.]{3,20}$", v):
+            raise ValueError('Username must be 3-20 characters long and contain only letters, numbers, underscores, and dots (no spaces)')
         return v
 
     @field_validator('password')
@@ -21,7 +21,9 @@ class UserCreate(BaseModel):
         if len(v) < 8:
             raise ValueError('Password must be at least 8 characters long')
         if not any(char.isdigit() for char in v):
-            raise ValueError('Password must contain at least one numeral')
+            raise ValueError('Password must contain at least one number')
+        if not any(char.islower() for char in v):
+            raise ValueError('Password must contain at least one lowercase letter')
         return v
 
 class UserResponse(BaseModel):
