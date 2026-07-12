@@ -43,6 +43,26 @@ export default function LoginPage() {
     if (!username || !password) return;
     if (authMode === 'register' && !preferredName) return;
 
+    // Client-side validation
+    if (authMode === 'register') {
+      const usernameRegex = /^[a-zA-Z0-9_]+$/;
+      if (!usernameRegex.test(username)) {
+        setErrorMsg('Username must contain only letters, numbers, and underscores (no spaces).');
+        return;
+      }
+      
+      if (password.length < 8) {
+        setErrorMsg('Password must be at least 8 characters long.');
+        return;
+      }
+      
+      const hasNumber = /\d/.test(password);
+      if (!hasNumber) {
+        setErrorMsg('Password must contain at least one numeral.');
+        return;
+      }
+    }
+
     setLoading(true);
     setErrorMsg('');
 
