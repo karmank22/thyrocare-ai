@@ -39,3 +39,43 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user: UserResponse
+
+class HealthRecordBase(BaseModel):
+    age: float | None = None
+    bmi: float | None = None
+    tsh: float | None = None
+    t3: float | None = None
+    t4: float | None = None
+    severity_score: int | None = None
+    fatigue: bool = False
+    hair_fall: bool = False
+    weight_gain: bool = False
+    cold_intolerance: bool = False
+    menstrual_irregularity: bool = False
+    mood_changes: bool = False
+    constipation: bool = False
+    dry_skin: bool = False
+    family_history_thyroid: bool = False
+    pcos_history: bool = False
+    pregnancy_status: bool = False
+    postpartum_flag: bool = False
+    medication_current: str | None = None
+    diet_pref: str | None = None
+    iodine_zone: str | None = None
+
+    # AI assessment results
+    risk_class: str | None = None
+    risk_score: float | None = None
+    emergency_flag: bool = False
+    referral_tier: str | None = None
+    notes: str | None = None
+
+class HealthRecordCreate(HealthRecordBase):
+    pass
+
+class HealthRecordResponse(HealthRecordBase):
+    id: str
+    user_id: str
+
+    class Config:
+        from_attributes = True

@@ -90,6 +90,38 @@ export default function IntakeFormPage() {
     await new Promise(r => setTimeout(r, 1800));
     const assessment = computeRiskAssessment(form);
     const recs = generateRecommendations(assessment, form);
+    
+    // Save to DB
+    try {
+      const token = localStorage.getItem('thyrocare_token');
+      if (token) {
+        const payload = {
+          ...form,
+          age: form.age ? parseFloat(form.age) : null,
+          bmi: form.bmi ? parseFloat(form.bmi) : null,
+          tsh: form.tsh ? parseFloat(form.tsh) : null,
+          t3: form.t3 ? parseFloat(form.t3) : null,
+          t4: form.t4 ? parseFloat(form.t4) : null,
+          severity_score: form.severity_score ? parseInt(form.severity_score) : null,
+          risk_class: assessment.risk_class,
+          risk_score: assessment.risk_score,
+          emergency_flag: assessment.emergency_flag,
+          referral_tier: recs.referral_tier,
+          notes: ''
+        };
+        await fetch('http://localhost:8000/api/records/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+    } catch (e) {
+      console.error('Failed to save record:', e);
+    }
+
     setAssessment(assessment);
     setRecommendations(recs);
     setFormData(form);
