@@ -1,0 +1,248 @@
+/* ─── Shared Panel Styles ─────────────────────────────── */
+.panel-card {
+  padding: var(--space-lg);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  opacity: 0;
+}
+.panel-card.animate-fadeInUp { opacity: 1; animation: fadeInUp 0.5s ease forwards; }
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+/* ─── Panel 1: Health Status ─────────────────────────── */
+.panel-status { min-height: 420px; }
+.status-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid;
+  background: rgba(255,255,255,0.02);
+  gap: var(--space-sm);
+  text-align: center;
+}
+.status-icon-large { font-size: 2.5rem; }
+.status-badge { font-size: 0.9375rem !important; }
+.status-emergency { font-size: 0.8125rem; color: var(--risk-high); font-weight: 600; }
+
+.confidence-grid { display: flex; flex-direction: column; gap: var(--space-sm); }
+.conf-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; }
+.conf-label { font-size: 0.75rem; color: var(--text-muted); grid-column: 1; }
+.conf-value { font-size: 0.8125rem; font-weight: 600; text-align: right; grid-column: 2; grid-row: 1; }
+.conf-value-big { font-size: 1rem !important; }
+.conf-bar { grid-column: 1 / -1; height: 4px; background: var(--color-border); border-radius: var(--radius-full); overflow: hidden; }
+.conf-bar-fill { height: 100%; border-radius: var(--radius-full); transition: width 0.8s ease; }
+
+.shap-section { flex: 1; min-height: 0; }
+.shap-title { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); }
+.shap-subtitle { font-size: 0.75rem; color: var(--text-muted); margin-bottom: var(--space-sm); }
+
+/* ─── Panel 2: Recommendations ────────────────────────── */
+.panel-recommendations { min-height: 340px; }
+.rec-list { display: flex; flex-direction: column; gap: var(--space-md); flex: 1; overflow-y: auto; max-height: 260px; }
+.rec-item { display: flex; gap: var(--space-sm); align-items: flex-start; }
+.rec-bullet {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--text-accent);
+  flex-shrink: 0; margin-top: 7px;
+}
+.rec-text { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.65; }
+.followup-chip {
+  display: flex; align-items: center; gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(0,200,150,0.08);
+  border: 1px solid rgba(0,200,150,0.2);
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* ─── Panel 3: GenAI Explanation ──────────────────────── */
+.panel-genai { min-height: 300px; }
+.genai-lang-badge {
+  display: flex; align-items: center; gap: var(--space-sm);
+  font-size: 0.8125rem; color: var(--text-muted);
+}
+.genai-grade {
+  margin-left: auto;
+  background: rgba(0,200,150,0.1);
+  color: var(--text-accent);
+  padding: 2px 8px; border-radius: var(--radius-full);
+  font-size: 0.6875rem; font-weight: 600;
+}
+.genai-text {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  border-left: 3px solid;
+  background: rgba(255,255,255,0.02);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+.genai-meta {
+  display: flex; gap: var(--space-lg); flex-wrap: wrap;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-border);
+}
+.genai-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.genai-meta-label { font-size: 0.6875rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.genai-meta-value { font-size: 0.8125rem; font-weight: 600; color: var(--text-secondary); }
+.genai-disclaimer { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+
+/* ─── Panel 4: Report Upload ──────────────────────────── */
+.panel-upload { min-height: 320px; }
+.panel-upload-zone {
+  flex: 1;
+  border-radius: var(--radius-lg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--space-sm); cursor: pointer;
+  text-align: center; padding: var(--space-xl);
+  min-height: 200px;
+}
+.panel-upload-zone.drag-over { border-color: rgba(0,200,150,0.5) !important; background: rgba(0,200,150,0.06) !important; }
+.upload-method-tags { display: flex; gap: var(--space-sm); margin-top: var(--space-sm); }
+.parsing-state {
+  display: flex; align-items: center; gap: var(--space-md);
+  padding: var(--space-lg);
+  background: rgba(255,255,255,0.03);
+  border-radius: var(--radius-md);
+}
+.parsing-title { font-weight: 600; color: var(--text-primary); }
+.parsing-sub { font-size: 0.8125rem; color: var(--text-muted); }
+.extracted-values { display: flex; flex-direction: column; gap: var(--space-md); }
+.extracted-header { display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem; font-weight: 600; color: var(--text-accent); }
+.biomarker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+.biomarker-item {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  display: flex; flex-direction: column; gap: 2px;
+  background: rgba(255,255,255,0.03);
+}
+.biomarker-label { font-size: 0.6875rem; color: var(--text-muted); font-weight: 600; }
+.biomarker-value { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+.biomarker-range { font-size: 0.6875rem; color: var(--text-muted); }
+.biomarker-flag { font-size: 0.6875rem; font-weight: 600; }
+.flag-normal { color: var(--risk-normal); }
+.flag-borderline { color: var(--risk-mild); }
+.flag-elevated { color: var(--risk-high); }
+.parse-meta { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+
+/* ─── Panel 5: TSH Trend ──────────────────────────────── */
+.trend-summary { display: flex; align-items: center; justify-content: space-between; }
+.trend-current { font-size: 2rem; font-weight: 600; letter-spacing: -0.03em; }
+.trend-delta {
+  display: flex; flex-direction: column; align-items: flex-end;
+  font-size: 1rem; font-weight: 600;
+}
+.trend-delta div { font-size: 0.75rem; font-weight: 400; color: var(--text-muted); }
+.trend-delta.improving { color: var(--risk-normal); }
+.trend-delta.worsening { color: var(--risk-high); }
+.trend-legend { display: flex; gap: var(--space-md); font-size: 0.6875rem; color: var(--text-muted); flex-wrap: wrap; }
+
+/* ─── Panel 6: History Timeline ──────────────────────── */
+.timeline { display: flex; flex-direction: column; gap: 0; overflow-y: auto; max-height: 360px; }
+.timeline-item { display: flex; gap: var(--space-md); }
+.timeline-line-wrap { display: flex; flex-direction: column; align-items: center; gap: 0; width: 20px; flex-shrink: 0; }
+.timeline-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.timeline-connector { width: 2px; flex: 1; min-height: 20px; background: var(--color-border); margin: 4px 0; }
+.timeline-content { flex: 1; padding-bottom: var(--space-md); }
+.timeline-date { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+.timeline-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: 4px; flex-wrap: wrap; }
+.timeline-tsh { font-size: 0.8125rem; font-weight: 600; }
+.timeline-note { font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.6; }
+
+/* ─── Panel 7: Referral ────────────────────────────────── */
+.panel-referral { min-height: 420px; }
+.referral-tier-badge {
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  border: 1px solid;
+  font-size: 0.9375rem; font-weight: 600;
+  align-self: flex-start;
+}
+.referral-trigger { font-size: 0.8125rem; color: var(--text-muted); }
+.referral-body { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); flex: 1; min-height: 0; }
+.facilities-list { display: flex; flex-direction: column; gap: var(--space-sm); overflow-y: auto; }
+.facilities-title { font-size: 0.8125rem; font-weight: 600; color: var(--text-muted); margin-bottom: var(--space-xs); }
+.facility-item { padding: var(--space-md); cursor: pointer; transition: all var(--transition-fast); }
+.facility-item.selected { border-color: rgba(0,200,150,0.4) !important; background: rgba(0,200,150,0.06) !important; }
+.facility-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-sm); margin-bottom: 6px; }
+.facility-name { font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+.facility-distance { font-size: 0.75rem; color: var(--text-accent); white-space: nowrap; font-weight: 600; }
+.facility-meta { display: flex; flex-direction: column; gap: 4px; }
+.referral-map-wrap { border-radius: var(--radius-lg); overflow: hidden; min-height: 220px; }
+.referral-actions { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+
+/* ─── Panel 8: Wellness Resources ─────────────────────── */
+.resources-grid { display: flex; flex-direction: column; gap: var(--space-sm); overflow-y: auto; max-height: 400px; }
+.resource-card {
+  display: flex; align-items: flex-start; gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  text-decoration: none; color: inherit;
+  transition: all var(--transition-fast);
+}
+.resource-icon { font-size: 1.5rem; flex-shrink: 0; }
+.resource-body { flex: 1; min-width: 0; }
+.resource-title { font-size: 0.9375rem; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.resource-subtitle { font-size: 0.75rem; color: var(--text-accent); margin-bottom: 4px; }
+.resource-desc { font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 6px; }
+.resource-tags { display: flex; gap: var(--space-xs); flex-wrap: wrap; }
+.resource-arrow { color: var(--text-muted); font-size: 1.125rem; align-self: center; flex-shrink: 0; transition: transform var(--transition-fast); }
+.resource-card:hover .resource-arrow { transform: translateX(4px); color: var(--text-accent); }
+
+/* ─── Panel 9: Wellness Goals ─────────────────────────── */
+.goals-progress { display: flex; align-items: center; gap: var(--space-lg); }
+.goals-progress-ring { position: relative; flex-shrink: 0; }
+.goals-progress-text {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.goals-pct { font-size: 1.125rem; font-weight: 600; background: var(--gradient-primary);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.goals-count { font-size: 2rem; font-weight: 600; letter-spacing: -0.03em; }
+.goals-count-label { font-size: 0.8125rem; color: var(--text-muted); }
+.goals-complete-badge { margin-top: 4px; font-size: 0.8125rem; color: var(--risk-normal); font-weight: 600; }
+.goals-list { display: flex; flex-direction: column; gap: var(--space-xs); overflow-y: auto; max-height: 320px; }
+.goal-item {
+  display: flex; align-items: center; gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: rgba(255,255,255,0.02);
+  width: 100%; text-align: left;
+  font-size: 0.875rem; color: var(--text-secondary);
+  cursor: pointer; transition: all var(--transition-fast);
+}
+.goal-item:hover { border-color: var(--color-border-hover); background: rgba(255,255,255,0.05); }
+.goal-item.completed { background: rgba(0,200,150,0.06); border-color: rgba(0,200,150,0.25); }
+.goal-item.completed .goal-label { text-decoration: line-through; color: var(--text-muted); }
+.goal-checkbox {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 2px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.625rem; font-weight: 600;
+  flex-shrink: 0; transition: all var(--transition-fast);
+}
+.goal-checkbox.checked { border-color: var(--text-accent); background: var(--text-accent); color: #070c1a; }
+.goal-icon { font-size: 1rem; flex-shrink: 0; }
+.goal-label { flex: 1; }
+
+@media (max-width: 768px) {
+  .referral-body { grid-template-columns: 1fr; }
+  .biomarker-grid { grid-template-columns: repeat(2, 1fr); }
+}

@@ -1,0 +1,70 @@
+{
+  "app": { "name": "ThyroCare-AI", "tagline": "हर महिला के लिए AI स्वास्थ्य सहायक" },
+  "nav": { "home": "होम", "screening": "स्क्रीनिंग शुरू करें", "dashboard": "मेरा डैशबोर्ड", "resources": "संसाधन", "worker": "स्वास्थ्य कार्यकर्ता", "language": "भाषा" },
+  "landing": {
+    "hero_title": "थायरॉइड स्वास्थ्य की जानकारी,",
+    "hero_title2": "आपकी भाषा में",
+    "hero_subtitle": "ग्रामीण और अर्ध-शहरी भारत की महिलाओं के लिए AI-संचालित थायरॉइड जोखिम जांच। अपनी भाषा में व्यक्तिगत मार्गदर्शन पाएं।",
+    "start_screening": "मुफ्त जांच शुरू करें",
+    "learn_more": "और जानें",
+    "stats_1_value": "4.2 करोड़+", "stats_1_label": "भारतीयों को थायरॉइड रोग",
+    "stats_2_value": "70-80%", "stats_2_label": "महिलाएं हैं",
+    "stats_3_value": "94.2%", "stats_3_label": "AI सटीकता",
+    "stats_4_value": "5 राज्य", "stats_4_label": "पायलट कवरेज",
+    "features_title": "बुद्धिमान देखभाल की छह परतें",
+    "feature_1_title": "लक्षण दर्ज करें", "feature_1_desc": "20 मापदंडों के साथ फॉर्म, आवाज इनपुट और चित्रात्मक लक्षण चुनाव।",
+    "feature_2_title": "लैब रिपोर्ट व्याख्या", "feature_2_desc": "PDF या छवि रिपोर्ट अपलोड करें। AI TSH, T3, T4 मूल्य निकालता है।",
+    "feature_3_title": "AI जोखिम भविष्यवाणी", "feature_3_desc": "94.2% सटीकता के साथ 4-वर्ग जोखिम रेटिंग।",
+    "feature_4_title": "व्यक्तिगत सिफारिशें", "feature_4_desc": "आहार, व्यायाम, जीवनशैली और अनुवर्ती सलाह।",
+    "feature_5_title": "AI व्याख्या", "feature_5_desc": "हिंदी, तमिल, बंगाली, तेलुगु और मराठी में सरल भाषा में स्पष्टीकरण।",
+    "feature_6_title": "डॉक्टर रेफरल", "feature_6_desc": "टेलीमेडिसिन, PMJAY अस्पताल, या आपातकालीन 104 हेल्पलाइन।",
+    "cta_title": "आज ही अपनी थायरॉइड जांच शुरू करें", "cta_subtitle": "मुफ्त, गोपनीय और आपकी भाषा में उपलब्ध।"
+  },
+  "intake": {
+    "title": "थायरॉइड स्वास्थ्य जांच", "subtitle": "अपना व्यक्तिगत थायरॉइड जोखिम मूल्यांकन पाने के लिए यह फॉर्म भरें",
+    "step": "चरण", "of": "में से",
+    "step1_title": "बुनियादी जानकारी", "step2_title": "लैब मूल्य", "step3_title": "लक्षण", "step4_title": "चिकित्सा इतिहास", "step5_title": "जीवनशैली",
+    "age": "आयु (वर्ष)", "bmi": "BMI (kg/m²)", "has_lab_report": "क्या आपके पास थायरॉइड लैब रिपोर्ट है?",
+    "yes": "हाँ", "no": "नहीं", "tsh": "TSH (mIU/L)", "t3": "T3 (pg/mL)", "t4": "T4 (ng/dL)",
+    "severity_score": "आपके लक्षण कितने गंभीर हैं? (0-10)",
+    "symptoms_title": "अपने लक्षण चुनें",
+    "fatigue": "थकान", "hair_fall": "बालों का झड़ना", "weight_gain": "वजन बढ़ना", "cold_intolerance": "ठंड असहिष्णुता",
+    "menstrual_irregularity": "मासिक अनियमितता", "mood_changes": "मूड में बदलाव", "constipation": "कब्ज", "dry_skin": "रूखी त्वचा",
+    "family_history": "थायरॉइड रोग का पारिवारिक इतिहास?", "pcos_history": "PCOS का इतिहास?",
+    "pregnancy_status": "वर्तमान में गर्भवती?", "postpartum": "पिछले 1 वर्ष में प्रसव?",
+    "medications": "वर्तमान दवाएं (यदि कोई हो)", "diet_pref": "खान-पान की प्राथमिकता",
+    "vegetarian": "शाकाहारी", "non_vegetarian": "मांसाहारी",
+    "region": "आपका क्षेत्र", "inland": "अंतर्देशीय", "coastal": "तटीय",
+    "next": "अगला", "previous": "पिछला", "submit": "मेरा जोखिम मूल्यांकन पाएं",
+    "voice_input": "अपने लक्षण बोलें", "upload_report": "लैब रिपोर्ट अपलोड करें"
+  },
+  "dashboard": {
+    "title": "मेरा स्वास्थ्य डैशबोर्ड", "last_updated": "अंतिम अपडेट",
+    "risk_normal": "सामान्य", "risk_mild": "हल्का जोखिम", "risk_moderate": "मध्यम जोखिम", "risk_high": "उच्च जोखिम",
+    "confidence": "विश्वास", "recommendations": "सिफारिशें",
+    "diet": "आहार", "exercise": "व्यायाम", "lifestyle": "जीवनशैली", "followup": "अनुवर्ती", "referral": "डॉक्टर रेफरल",
+    "tsh_trend": "TSH प्रवृत्ति (6 महीने)", "history": "स्वास्थ्य इतिहास",
+    "wellness_goals": "दैनिक स्वास्थ्य लक्ष्य", "resources": "स्वास्थ्य संसाधन", "ai_explanation": "AI व्याख्या",
+    "emergency_alert": "आपातकालीन चेतावनी",
+    "emergency_message": "आपका TSH स्तर या लक्षण गंभीरता तत्काल चिकित्सा ध्यान की आवश्यकता है।",
+    "call_104": "104 हेल्पलाइन कॉल करें", "book_telemedicine": "e-Sanjeevani परामर्श बुक करें",
+    "nearest_hospital": "निकटतम PMJAY अस्पताल खोजें",
+    "shap_title": "यह जोखिम स्तर क्यों?", "shap_subtitle": "आपके मूल्यांकन में योगदान करने वाले शीर्ष कारक"
+  },
+  "worker": {
+    "title": "स्वास्थ्य कार्यकर्ता इंटरफेस", "subtitle": "ASHA / ANM सहायता प्रविष्टि",
+    "patient_name": "रोगी का नाम", "patient_age": "रोगी की आयु", "patient_village": "गांव/शहर",
+    "worker_id": "कार्यकर्ता ID", "submit": "मूल्यांकन जमा करें"
+  },
+  "referral": {
+    "title": "डॉक्टर रेफरल", "tier_none": "कोई रेफरल नहीं",
+    "tier_tele": "टेलीमेडिसिन (e-Sanjeevani)", "tier_pmjay": "PMJAY अस्पताल",
+    "tier_emergency": "आपातकाल — 104 हेल्पलाइन",
+    "nearest_facilities": "निकटतम सुविधाएं", "distance": "किमी दूर", "book_now": "परामर्श बुक करें"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...", "error": "कुछ गलत हुआ",
+    "back": "वापस", "close": "बंद करें", "save": "सहेजें",
+    "language_select": "भाषा चुनें", "powered_by": "ThyroCare-AI रिसर्च द्वारा संचालित"
+  }
+}

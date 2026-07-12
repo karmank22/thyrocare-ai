@@ -1,0 +1,63 @@
+.dashboard-page { min-height: 100vh; }
+.dashboard-wrap { padding-top: var(--navbar-height); padding-bottom: var(--space-3xl); }
+.dashboard-loading { min-height: 100vh; }
+.loading-center {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(100vh - var(--navbar-height));
+  gap: var(--space-lg);
+  color: var(--text-secondary);
+}
+
+.dashboard-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: var(--space-2xl) 0 var(--space-xl);
+  flex-wrap: wrap; gap: var(--space-md);
+}
+.dashboard-title { font-size: 2rem; font-weight: 600; letter-spacing: -0.03em; }
+.dashboard-subtitle { font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; }
+
+.emergency-banner {
+  display: flex; align-items: flex-start; gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+.emergency-icon { font-size: 2rem; flex-shrink: 0; }
+.emergency-content { flex: 1; min-width: 200px; }
+.emergency-content h3 { font-size: 1.0625rem; font-weight: 600; color: var(--risk-high); margin-bottom: 4px; }
+.emergency-content p { font-size: 0.875rem; color: var(--text-secondary); }
+.emergency-actions { display: flex; gap: var(--space-sm); flex-wrap: wrap; align-items: center; }
+
+/* Grid layout */
+.dashboard-grid { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+.dashboard-row-top {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: var(--space-lg);
+}
+
+.dashboard-row-mid {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: var(--space-lg);
+}
+
+.dashboard-row-bot {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--space-lg);
+}
+
+.dashboard-footer {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 1100px) {
+  .dashboard-row-top { grid-template-columns: 1fr 1fr; }
+  .dashboard-row-mid, .dashboard-row-bot { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .dashboard-row-top { grid-template-columns: 1fr; }
+  .dashboard-title { font-size: 1.5rem; }
+}
