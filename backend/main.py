@@ -18,14 +18,11 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="ThyroCare-AI API")
 
-# CORS: reads FRONTEND_URL from env on Render, falls back to localhost for dev
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
-allowed_origins = [frontend_url, "http://localhost:3000", "http://127.0.0.1:3000"]
-
+# CORS: allow all origins - safe with JWT Bearer token auth (no cookies)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
