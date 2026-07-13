@@ -117,7 +117,7 @@
 .hero-icon-wrapper {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: 50%;
   background: linear-gradient(135deg, rgba(0, 200, 150, 0.2), rgba(59, 130, 246, 0.2));
   color: var(--color-primary);
   display: flex;
@@ -199,7 +199,7 @@
 /* 2. Assessment Timeline */
 .timeline-section {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: var(--space-2xl);
   position: relative;
@@ -215,6 +215,7 @@
   text-align: center;
   position: relative;
   z-index: 2;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
 }
 
 .timeline-label {
@@ -245,6 +246,7 @@
   padding: 0 var(--space-lg);
   position: relative;
   z-index: 1;
+  flex: 0.5;
 }
 
 .connector-line {
@@ -259,10 +261,20 @@
   background: transparent;
 }
 
+.connector-title {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+  background: var(--color-bg-primary);
+  padding: 0 4px;
+}
+
 .connector-badge {
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
-  padding: 0.5rem 1rem;
+  padding: 0.35rem 1rem;
   border-radius: 20px;
   font-size: 0.85rem;
   color: var(--text-secondary);
@@ -322,6 +334,23 @@
   background: rgba(255, 255, 255, 0.02);
 }
 
+.metric-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.metric-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .metric-name {
   font-weight: 600;
   color: var(--text-primary);
@@ -330,6 +359,25 @@
 .metric-val {
   font-size: 1.05rem;
   font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.change-val {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  flex-direction: column;
+}
+
+.change-diff {
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.change-pct {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
 }
 
 /* Progress Indicators */
@@ -339,7 +387,7 @@
   gap: 0.35rem;
   font-weight: 600;
   padding: 0.35rem 0.6rem;
-  border-radius: 6px;
+  border-radius: 20px;
   font-size: 0.85rem;
   white-space: nowrap;
 }
@@ -359,19 +407,113 @@
   color: #f59e0b;
 }
 
-.trend-diff {
-  font-weight: 700;
-}
-
-.trend-pct {
-  opacity: 0.8;
-  font-weight: 500;
-  font-size: 0.8rem;
-}
-
 .ref-range-text {
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+/* Recommendations Comparison */
+.recommendations-comparison {
+  margin-bottom: var(--space-2xl);
+}
+
+.recommendations-comparison h3 {
+  font-size: 1.1rem;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.rec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .rec-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rec-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+}
+
+.rec-card h4 {
+  margin-top: 0;
+  margin-bottom: var(--space-md);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rec-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rec-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.4;
+}
+
+.rec-list li:last-child {
+  border-bottom: none;
+}
+
+.rec-diff-added {
+  color: #10b981;
+}
+
+.rec-diff-added::before {
+  content: '+';
+  font-weight: bold;
+}
+
+.rec-diff-removed {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.rec-diff-removed::before {
+  content: '-';
+  font-weight: bold;
+}
+
+.rec-diff-kept::before {
+  content: '•';
+  color: var(--text-muted);
+}
+
+/* Disclaimer */
+.medical-disclaimer-card {
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px dashed rgba(245, 158, 11, 0.3);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+  line-height: 1.5;
+}
+
+.medical-disclaimer-card svg {
+  color: #f59e0b;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 /* Recommendations Comparison */

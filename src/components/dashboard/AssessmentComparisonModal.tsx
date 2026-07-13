@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Download, TrendingDown, TrendingUp, Minus, AlertCircle, Info, Calendar, Activity, CheckCircle, ArrowRight } from 'lucide-react';
+import { X, Download, TrendingDown, TrendingUp, Minus, AlertCircle, Info, Calendar, Activity, CheckCircle, Droplet, Thermometer, Weight, ShieldAlert } from 'lucide-react';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 import type { AssessmentRecord } from '../../pages/HistoryPage';
@@ -94,7 +94,21 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
     }
   };
 
-  // Trend pill combining icon, color, difference and percentage
+  // Difference column (numerical absolute + percent)
+  const renderChangeColumn = (change: {diff: number, percent: number}) => {
+    if (Math.abs(change.diff) < 0.1) {
+      return <span className="change-val">0.00</span>;
+    }
+    const sign = change.diff > 0 ? '+' : '';
+    return (
+      <span className="change-val">
+        <span className="change-diff">{sign}{change.diff.toFixed(2)}</span>
+        <span className="change-pct">{sign}{change.percent.toFixed(1)}%</span>
+      </span>
+    );
+  };
+
+  // Trend pill combining icon and text ONLY
   const renderTrendPill = (change: {diff: number, percent: number}, invertLogic = false) => {
     if (Math.abs(change.diff) < 0.1) {
       return (
@@ -108,8 +122,7 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
     return (
       <span className={`trend-pill ${isImproved ? 'improved' : 'worsened'}`}>
         {change.diff < 0 ? <TrendingDown size={14} /> : <TrendingUp size={14} />}
-        <span className="trend-diff">{Math.abs(change.diff).toFixed(2)}</span>
-        <span className="trend-pct">({Math.abs(change.percent).toFixed(1)}%)</span>
+        {isImproved ? 'Improved' : 'Worsened'}
       </span>
     );
   };
@@ -219,6 +232,7 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
               </div>
               
               <div className="timeline-connector">
+                <div className="connector-title">Comparison Period</div>
                 <div className="connector-line"></div>
                 <div className="connector-badge">
                   {timeString}
@@ -245,42 +259,73 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
                     <th>Previous</th>
                     <th>Current</th>
                     <th>Change</th>
+                    <th>Trend</th>
                     <th>Reference Range</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="metric-name">TSH</td>
-                    <td className="metric-val">{older.tsh}</td>
-                    <td className="metric-val">{newer.tsh}</td>
+                    <td>
+                      <div className="metric-name-wrapper">
+                        <div className="metric-icon"><Droplet size={16} /></div>
+                        <span className="metric-name">TSH</span>
+                      </div>
+                    </td>
+                    <td className="metric-val">{older.tsh.toFixed(2)}</td>
+                    <td className="metric-val">{newer.tsh.toFixed(2)}</td>
+                    <td>{renderChangeColumn(calculateChange(older.tsh, newer.tsh))}</td>
                     <td>{renderTrendPill(calculateChange(older.tsh, newer.tsh))}</td>
                     <td className="ref-range-text">0.4 - 4.0 mIU/L</td>
                   </tr>
                   <tr>
-                    <td className="metric-name">T3</td>
-                    <td className="metric-val">{older.t3}</td>
-                    <td className="metric-val">{newer.t3}</td>
+                    <td>
+                      <div className="metric-name-wrapper">
+                        <div className="metric-icon"><Thermometer size={16} /></div>
+                        <span className="metric-name">T3</span>
+                      </div>
+                    </td>
+                    <td className="metric-val">{older.t3.toFixed(2)}</td>
+                    <td className="metric-val">{newer.t3.toFixed(2)}</td>
+                    <td>{renderChangeColumn(calculateChange(older.t3, newer.t3))}</td>
                     <td>{renderTrendPill(calculateChange(older.t3, newer.t3), true)}</td>
                     <td className="ref-range-text">1.2 - 3.1 nmol/L</td>
                   </tr>
                   <tr>
-                    <td className="metric-name">T4</td>
-                    <td className="metric-val">{older.t4}</td>
-                    <td className="metric-val">{newer.t4}</td>
+                    <td>
+                      <div className="metric-name-wrapper">
+                        <div className="metric-icon"><Thermometer size={16} /></div>
+                        <span className="metric-name">T4</span>
+                      </div>
+                    </td>
+                    <td className="metric-val">{older.t4.toFixed(2)}</td>
+                    <td className="metric-val">{newer.t4.toFixed(2)}</td>
+                    <td>{renderChangeColumn(calculateChange(older.t4, newer.t4))}</td>
                     <td>{renderTrendPill(calculateChange(older.t4, newer.t4), true)}</td>
                     <td className="ref-range-text">60 - 160 nmol/L</td>
                   </tr>
                   <tr>
-                    <td className="metric-name">BMI</td>
+                    <td>
+                      <div className="metric-name-wrapper">
+                        <div className="metric-icon"><Weight size={16} /></div>
+                        <span className="metric-name">BMI</span>
+                      </div>
+                    </td>
                     <td className="metric-val">{older.bmi.toFixed(1)}</td>
                     <td className="metric-val">{newer.bmi.toFixed(1)}</td>
+                    <td>{renderChangeColumn(calculateChange(older.bmi, newer.bmi))}</td>
                     <td>{renderTrendPill(calculateChange(older.bmi, newer.bmi))}</td>
                     <td className="ref-range-text">18.5 - 24.9</td>
                   </tr>
                   <tr>
-                    <td className="metric-name">Risk Score</td>
+                    <td>
+                      <div className="metric-name-wrapper">
+                        <div className="metric-icon"><ShieldAlert size={16} /></div>
+                        <span className="metric-name">Risk Score</span>
+                      </div>
+                    </td>
                     <td className="metric-val">{(older.risk_score * 100).toFixed(0)}</td>
                     <td className="metric-val">{(newer.risk_score * 100).toFixed(0)}</td>
+                    <td>{renderChangeColumn(calculateChange(older.risk_score * 100, newer.risk_score * 100))}</td>
                     <td>{renderTrendPill(calculateChange(older.risk_score * 100, newer.risk_score * 100))}</td>
                     <td className="ref-range-text">&lt; 30 Low Risk</td>
                   </tr>
