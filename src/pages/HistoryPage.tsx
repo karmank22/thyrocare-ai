@@ -143,10 +143,11 @@ export default function HistoryPage() {
                 <div 
                   key={record.id} 
                   className={`glass-card history-card ${isSelected ? 'selected' : ''}`} 
-                  style={{ padding: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                  style={{ padding: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+                  onClick={() => !isDisabled && handleToggleSelection(record.id)}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-lg)' }}>
-                    <div>
+                    <div onClick={(e) => e.stopPropagation()}>
                       <input 
                         type="checkbox" 
                         className="checkbox-custom"

@@ -65,23 +65,25 @@
 
 .compare-action-bar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(150%);
+  width: 90%;
+  max-width: 600px;
   background: var(--color-bg-secondary);
-  border-top: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   padding: var(--space-md) var(--space-xl);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-  z-index: 100;
-  transform: translateY(100%);
-  animation: slideUp 0.3s forwards ease-out;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  z-index: 9999;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slideUp {
-  to { transform: translateY(0); }
+  to { transform: translateX(-50%) translateY(0); }
 }
 
 .compare-action-text {
