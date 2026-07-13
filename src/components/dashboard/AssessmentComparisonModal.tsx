@@ -179,7 +179,7 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
             </div>
 
             {/* Overall Progress Summary */}
-            <div className="comparison-summary">
+            <div className="compare-glass-card comparison-summary">
               <h3><Info size={18} /> Overall Progress Summary</h3>
               {generateSummary().map((paragraph, idx) => (
                 <p key={idx}>{paragraph}</p>
@@ -187,94 +187,98 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
             </div>
 
             {/* Timeline & Risk Status */}
-            <div className="comparison-timeline">
-              <div className="timeline-point">
-                <div className="timeline-date">
-                  <Calendar size={14} style={{marginRight: '4px', verticalAlign: 'middle'}}/>
-                  {new Date(older.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric', day: 'numeric' })}
+            <div className="compare-glass-card">
+              <div className="comparison-timeline">
+                <div className="timeline-point">
+                  <div className="timeline-date">
+                    <Calendar size={14} />
+                    {new Date(older.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric', day: 'numeric' })}
+                  </div>
+                  <div>{getRiskBadge(older.risk_class)}</div>
                 </div>
-                <div>{getRiskBadge(older.risk_class)}</div>
-              </div>
-              
-              <div className="timeline-arrow">
-                <span style={{ fontSize: '1.5rem' }}>&rarr;</span>
-                <span>{timeString}</span>
-              </div>
-              
-              <div className="timeline-point">
-                <div className="timeline-date">
-                  <Calendar size={14} style={{marginRight: '4px', verticalAlign: 'middle'}}/>
-                  {new Date(newer.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric', day: 'numeric' })}
+                
+                <div className="timeline-arrow">
+                  <span>{timeString}</span>
                 </div>
-                <div>{getRiskBadge(newer.risk_class)}</div>
+                
+                <div className="timeline-point">
+                  <div className="timeline-date">
+                    <Calendar size={14} />
+                    {new Date(newer.created_at).toLocaleDateString('en-IN', { month: 'short', year: 'numeric', day: 'numeric' })}
+                  </div>
+                  <div>{getRiskBadge(newer.risk_class)}</div>
+                </div>
               </div>
             </div>
 
             {/* Enhanced Comparison Table */}
-            <div className="comparison-table-wrapper">
-              <table className="comparison-table">
-                <thead>
-                  <tr>
-                    <th>Metric</th>
-                    <th>Previous</th>
-                    <th>Current</th>
-                    <th>Change</th>
-                    <th>Reference Range</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>TSH</strong></td>
-                    <td>{older.tsh}</td>
-                    <td>{newer.tsh}</td>
-                    <td>{renderTrendIndicator(calculateChange(older.tsh, newer.tsh))}</td>
-                    <td className="ref-range">0.4 - 4.0 mIU/L</td>
-                  </tr>
-                  <tr>
-                    <td><strong>T3</strong></td>
-                    <td>{older.t3}</td>
-                    <td>{newer.t3}</td>
-                    <td>{renderTrendIndicator(calculateChange(older.t3, newer.t3), true)}</td>
-                    <td className="ref-range">1.2 - 3.1 nmol/L</td>
-                  </tr>
-                  <tr>
-                    <td><strong>T4</strong></td>
-                    <td>{older.t4}</td>
-                    <td>{newer.t4}</td>
-                    <td>{renderTrendIndicator(calculateChange(older.t4, newer.t4), true)}</td>
-                    <td className="ref-range">60 - 160 nmol/L</td>
-                  </tr>
-                  <tr>
-                    <td><strong>BMI</strong></td>
-                    <td>{older.bmi.toFixed(1)}</td>
-                    <td>{newer.bmi.toFixed(1)}</td>
-                    <td>{renderTrendIndicator(calculateChange(older.bmi, newer.bmi))}</td>
-                    <td className="ref-range">18.5 - 24.9</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Risk Score</strong></td>
-                    <td>{(older.risk_score * 100).toFixed(0)}</td>
-                    <td>{(newer.risk_score * 100).toFixed(0)}</td>
-                    <td>{renderTrendIndicator(calculateChange(older.risk_score * 100, newer.risk_score * 100))}</td>
-                    <td className="ref-range">&lt; 30 Low Risk</td>
-                  </tr>
-                </tbody>
-              </table>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem', fontStyle: 'italic' }}>
-                * Reference ranges may vary between laboratories and are provided for informational purposes only.
-              </p>
+            <div className="compare-glass-card">
+              <h3 className="comparison-table-header">Clinical Metrics Comparison</h3>
+              <div className="comparison-table-wrapper">
+                <table className="comparison-table">
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th>Previous</th>
+                      <th>Current</th>
+                      <th>Change</th>
+                      <th>Reference Range</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>TSH</strong></td>
+                      <td>{older.tsh}</td>
+                      <td>{newer.tsh}</td>
+                      <td>{renderTrendIndicator(calculateChange(older.tsh, newer.tsh))}</td>
+                      <td className="ref-range">0.4 - 4.0 mIU/L</td>
+                    </tr>
+                    <tr>
+                      <td><strong>T3</strong></td>
+                      <td>{older.t3}</td>
+                      <td>{newer.t3}</td>
+                      <td>{renderTrendIndicator(calculateChange(older.t3, newer.t3), true)}</td>
+                      <td className="ref-range">1.2 - 3.1 nmol/L</td>
+                    </tr>
+                    <tr>
+                      <td><strong>T4</strong></td>
+                      <td>{older.t4}</td>
+                      <td>{newer.t4}</td>
+                      <td>{renderTrendIndicator(calculateChange(older.t4, newer.t4), true)}</td>
+                      <td className="ref-range">60 - 160 nmol/L</td>
+                    </tr>
+                    <tr>
+                      <td><strong>BMI</strong></td>
+                      <td>{older.bmi.toFixed(1)}</td>
+                      <td>{newer.bmi.toFixed(1)}</td>
+                      <td>{renderTrendIndicator(calculateChange(older.bmi, newer.bmi))}</td>
+                      <td className="ref-range">18.5 - 24.9</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Risk Score</strong></td>
+                      <td>{(older.risk_score * 100).toFixed(0)}</td>
+                      <td>{(newer.risk_score * 100).toFixed(0)}</td>
+                      <td>{renderTrendIndicator(calculateChange(older.risk_score * 100, newer.risk_score * 100))}</td>
+                      <td className="ref-range">&lt; 30 Low Risk</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '1rem', fontStyle: 'italic' }}>
+                  * Reference ranges may vary between laboratories and are provided for informational purposes only.
+                </p>
+              </div>
             </div>
 
             {/* Recommendations Comparison */}
-            <div className="recommendations-comparison">
-              <h3>Lifestyle Recommendations Comparison</h3>
+            <div className="compare-glass-card">
+              <h3 className="recommendations-header">Lifestyle Recommendations Update</h3>
               <div className="rec-grid">
                 <div className="rec-box">
                   <h4>Previous Recommendations</h4>
                   <ul className="rec-list">
                     {olderRecs.lifestyle?.map((rec: string, i: number) => (
                       <li key={i} className={!newerRecs.lifestyle?.includes(rec) ? 'rec-diff-removed' : ''}>
-                        • {rec}
+                        <span style={{flexShrink:0}}>•</span> <span>{rec}</span>
                       </li>
                     ))}
                     {!olderRecs.lifestyle?.length && <li>None</li>}
@@ -285,7 +289,7 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
                   <ul className="rec-list">
                     {newerRecs.lifestyle?.map((rec: string, i: number) => (
                       <li key={i} className={!olderRecs.lifestyle?.includes(rec) ? 'rec-diff-added' : ''}>
-                        • {rec}
+                        <span style={{flexShrink:0}}>•</span> <span>{rec}</span>
                       </li>
                     ))}
                     {!newerRecs.lifestyle?.length && <li>None</li>}
