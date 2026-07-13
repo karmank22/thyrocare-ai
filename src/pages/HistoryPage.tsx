@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
+import { API_BASE_URL } from '../config';
 import './HistoryPage.css';
 
 interface AssessmentRecord {
@@ -9,7 +10,7 @@ interface AssessmentRecord {
   model_version: string;
   risk_class: string;
   risk_score: number;
-  emergency_flag: bool;
+  emergency_flag: boolean;
 }
 
 export default function HistoryPage() {
@@ -27,7 +28,7 @@ export default function HistoryPage() {
       }
 
       try {
-        const res = await fetch('http://localhost:8000/api/assessments/', {
+        const res = await fetch(`${API_BASE_URL}/api/assessments/`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -121,7 +122,7 @@ export default function HistoryPage() {
                   </div>
                 </div>
                 <div>
-                  <button className="btn btn-secondary btn-sm" disabled>View Details</button>
+                  <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/assessment/${record.id}`)}>View Details</button>
                 </div>
               </div>
             ))}

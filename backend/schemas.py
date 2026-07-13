@@ -11,8 +11,8 @@ class UserCreate(BaseModel):
     @field_validator('username')
     @classmethod
     def validate_username(cls, v):
-        if not re.match(r"^[a-zA-Z0-9_.]{3,20}$", v):
-            raise ValueError('Username must be 3-20 characters long and contain only letters, numbers, underscores, and dots (no spaces)')
+        if not re.match(r"^[a-zA-Z0-9_]{3,20}$", v):
+            raise ValueError('Username must be 3-20 characters long and contain only letters, numbers, and underscores (no spaces)')
         return v
 
     @field_validator('password')

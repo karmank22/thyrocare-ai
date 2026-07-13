@@ -16,11 +16,13 @@ import LandingPage from './pages/LandingPage';
 import IntakeFormPage from './pages/IntakeFormPage';
 import DashboardPage from './pages/DashboardPage';
 import HistoryPage from './pages/HistoryPage';
+import AssessmentDetailsPage from './pages/AssessmentDetailsPage';
 import HealthWorkerPage from './pages/HealthWorkerPage';
 import LoginPage from './pages/LoginPage';
 
 // Context
 import { AppContext } from './contexts/AppContext';
+import { API_BASE_URL } from './config';
 import type { Theme, User } from './contexts/AppContext';
 import type { RiskAssessment, RecommendationSet, IntakeFormData, Language } from './types';
 
@@ -66,7 +68,7 @@ export default function App() {
       const token = localStorage.getItem('thyrocare_token');
       if (token) {
         try {
-          const res = await fetch('http://localhost:8000/api/auth/me', {
+          const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           if (res.ok) {
@@ -146,6 +148,14 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['patient']}>
                 <HistoryPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/assessment/:id" 
+            element={
+              <ProtectedRoute allowedRoles={['patient']}>
+                <AssessmentDetailsPage />
               </ProtectedRoute>
             } 
           />

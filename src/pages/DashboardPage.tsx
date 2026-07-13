@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Navbar from '../components/common/Navbar';
 import { useApp } from '../contexts/AppContext';
+import { API_BASE_URL } from '../config';
 import { computeRiskAssessment, generateRecommendations, generateExplanation } from '../services/riskEngine';
 import { mockFacilities, mockWellnessGoals, wellnessResources } from '../services/mockData';
 
@@ -56,7 +57,7 @@ export default function DashboardPage() {
       }
 
       try {
-        const res = await fetch('http://localhost:8000/api/assessments/latest', {
+        const res = await fetch(`${API_BASE_URL}/api/assessments/latest`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -152,12 +153,28 @@ export default function DashboardPage() {
         <div className="dashboard-header container">
           <div className="dashboard-header-left">
             <span className="section-label">{t('dashboard.title')}</span>
-            <h1 className="dashboard-title">
-              Welcome back, <span className="gradient-text">{currentUser?.preferred_name || 'Guest'}</span>
-            </h1>
-            <p className="dashboard-subtitle">
-              {t('dashboard.last_updated')}: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-            </p>
+            {!hasRecord ? (
+              <>
+                <h1 className="dashboard-title">
+                  Welcome, <span className="gradient-text">{currentUser?.preferred_name || 'Guest'}</span>!
+                </h1>
+                <p className="dashboard-subtitle">
+                  We're glad you're here. Upload your first thyroid report to generate your personalized AI assessment.
+                </p>
+              </>
+            ) : (
+              <>
+                <h1 className="dashboard-title">
+                  Welcome back, <span className="gradient-text">{currentUser?.preferred_name || 'Guest'}</span>!
+                </h1>
+                <p className="dashboard-subtitle">
+                  Here's your latest thyroid assessment.
+                </p>
+                <p className="dashboard-subtitle" style={{ fontSize: '12px', marginTop: '4px', opacity: 0.8 }}>
+                  {t('dashboard.last_updated')}: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </p>
+              </>
+            )}
           </div>
           <div className="dashboard-header-right">
             <button className="btn btn-secondary" onClick={() => navigate('/screening')} id="btn-new-screening">

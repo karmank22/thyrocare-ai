@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Navbar from '../components/common/Navbar';
 import { useApp } from '../contexts/AppContext';
+import { API_BASE_URL } from '../config';
 import { computeRiskAssessment, generateRecommendations } from '../services/riskEngine';
 import type { IntakeFormData, DietPref, IodineZone } from '../types';
 import './IntakeFormPage.css';
@@ -100,7 +101,7 @@ export default function IntakeFormPage() {
           severity_score: form.severity_score ? parseInt(form.severity_score) : null,
         };
         
-        const res = await fetch('http://localhost:8000/api/assessments/', {
+        const res = await fetch(`${API_BASE_URL}/api/assessments/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../contexts/AppContext';
+import { API_BASE_URL } from '../config';
 import './LoginPage.css';
 
 type LoginRole = 'patient' | 'worker';
@@ -45,9 +46,9 @@ export default function LoginPage() {
 
     // Client-side validation
     if (authMode === 'register') {
-      const usernameRegex = /^[a-zA-Z0-9_.]{3,20}$/;
+      const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
       if (!usernameRegex.test(username)) {
-        setErrorMsg('Username must be 3-20 characters long and contain only letters, numbers, underscores, and dots (no spaces).');
+        setErrorMsg('Username must be 3-20 characters long and contain only letters, numbers, and underscores (no spaces).');
         return;
       }
       
@@ -74,7 +75,7 @@ export default function LoginPage() {
 
     try {
       if (authMode === 'register') {
-        const res = await fetch('http://localhost:8000/api/auth/register', {
+        const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -106,7 +107,7 @@ export default function LoginPage() {
     formData.append('username', user);
     formData.append('password', pass);
 
-    const res = await fetch('http://localhost:8000/api/auth/login', {
+    const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formData.toString()
