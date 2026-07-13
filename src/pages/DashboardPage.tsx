@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Navbar from '../components/common/Navbar';
 import { useApp } from '../contexts/AppContext';
 import { computeRiskAssessment, generateRecommendations, generateExplanation } from '../services/riskEngine';
-import { mockTSHTrend, mockHistory, mockFacilities, mockWellnessGoals, wellnessResources } from '../services/mockData';
+import { mockFacilities, mockWellnessGoals, wellnessResources } from '../services/mockData';
 
 // Dashboard Panels
 import HealthStatusSummary from '../components/dashboard/HealthStatusSummary';
@@ -56,43 +56,44 @@ export default function DashboardPage() {
       }
 
       try {
-        const res = await fetch('http://localhost:8000/api/records/me', {
+        const res = await fetch('http://localhost:8000/api/assessments/latest', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        if (res.status === 404) {
-          setHasRecord(false);
-        } else if (res.ok) {
+        if (res.ok) {
           const data = await res.json();
-          setHasRecord(true);
-          
-          // Reconstruct assessment object from DB row
-          const fetchedAssessment = {
-            risk_class: data.risk_class || 'Normal',
-            risk_score: data.risk_score || 0.1,
-            emergency_flag: data.emergency_flag || false,
-            key_factors: ['tsh_level', 'symptoms']
-          };
-          
-          const fetchedRecs = {
-            lifestyle: ['Maintain hydration', 'Follow a balanced diet'],
-            dietary: [data.diet_pref === 'vegetarian' ? 'Include iodine-rich salt' : 'Include seafood'],
-            medical_advice: data.risk_score > 0.5 ? ['Consult endocrinologist'] : ['Routine checkup in 6 months'],
-            referral_tier: data.referral_tier || 'primary',
-            referral_trigger: data.emergency_flag ? 'Emergency Symptoms' : 'Standard Follow-up',
-            emergency_flag: data.emergency_flag
-          };
+          if (!data.hasReport || !data.report) {
+            setHasRecord(false);
+          } else {
+            setHasRecord(true);
+            const report = data.report;
+            
+            const fetchedAssessment = {
+              risk_class: report.risk_class || 'Normal',
+              risk_score: report.risk_score || 0.1,
+              emergency_flag: report.emergency_flag || false,
+              top_features: report.top_features ? JSON.parse(report.top_features) : []
+            };
+            
+            const fetchedRecs = report.recommendations_json 
+              ? JSON.parse(report.recommendations_json) 
+              : {
+                  diet: [], lifestyle: [], referral_tier: 'none'
+                };
 
-          setAssessment(fetchedAssessment);
-          setRecommendations(fetchedRecs);
-          setCtxAssessment(fetchedAssessment);
-          setCtxRecs(fetchedRecs);
-          
-          // Partial form reconstruction for TSH explanation
-          setCtxFormData({ tsh: data.tsh?.toString() || '0' } as any);
+            setAssessment(fetchedAssessment);
+            setRecommendations(fetchedRecs);
+            setCtxAssessment(fetchedAssessment);
+            setCtxRecs(fetchedRecs);
+            
+            setCtxFormData({ tsh: report.tsh?.toString() || '0' } as any);
+          }
+        } else {
+          setHasRecord(false);
         }
       } catch (e) {
-        console.error("Error fetching records", e);
+        console.error("Error fetching assessment", e);
+        setHasRecord(false);
       } finally {
         setLoading(false);
       }
@@ -115,11 +116,29 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="dashboard-loading">
+      <div className="dashboard-page">
         <Navbar />
-        <div className="loading-center">
-          <div className="spinner" style={{ width: 48, height: 48, borderWidth: 3 }} />
-          <p>Loading dashboard...</p>
+        <div className="dashboard-wrap container" style={{ marginTop: 'var(--space-xl)' }}>
+          {/* Skeleton Header */}
+          <div className="skeleton skeleton-text" style={{ width: '200px', height: '24px', marginBottom: '8px' }}></div>
+          <div className="skeleton skeleton-text" style={{ width: '300px', height: '40px', marginBottom: '32px' }}></div>
+          
+          {/* Skeleton Grid */}
+          <div className="dashboard-grid">
+            <div className="dashboard-row-top">
+              <div className="skeleton glass-card" style={{ height: '200px', flex: 1 }}></div>
+              <div className="skeleton glass-card" style={{ height: '200px', flex: 1.5 }}></div>
+              <div className="skeleton glass-card" style={{ height: '200px', flex: 1 }}></div>
+            </div>
+            <div className="dashboard-row-mid">
+              <div className="skeleton glass-card dashboard-col-wide" style={{ height: '250px' }}></div>
+              <div className="skeleton glass-card dashboard-col-narrow" style={{ height: '250px' }}></div>
+            </div>
+            <div className="dashboard-row-bot">
+              <div className="skeleton glass-card" style={{ height: '300px', flex: 1 }}></div>
+              <div className="skeleton glass-card" style={{ height: '300px', flex: 1 }}></div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -204,7 +223,7 @@ export default function DashboardPage() {
                   <PersonalizedRecommendations recommendations={recommendations} />
                 </div>
                 <div className="dashboard-col-narrow">
-                  <TSHTrendChart data={mockTSHTrend} />
+                  <TSHTrendChart data={[]} />
                 </div>
               </div>
 
@@ -219,7 +238,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div className="dashboard-col-narrow">
-                  <HealthHistoryTimeline history={mockHistory} />
+                  <HealthHistoryTimeline history={[]} />
                 </div>
               </div>
 

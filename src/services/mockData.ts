@@ -3,47 +3,7 @@
  */
 import type { TSHTrendPoint, HistoryEntry, Facility, WellnessGoal } from '../types';
 
-export const mockTSHTrend: TSHTrendPoint[] = [
-  { date: 'Jan', tsh: 6.2, risk_class: 'Mild' },
-  { date: 'Feb', tsh: 5.8, risk_class: 'Mild' },
-  { date: 'Mar', tsh: 4.9, risk_class: 'Normal' },
-  { date: 'Apr', tsh: 5.3, risk_class: 'Mild' },
-  { date: 'May', tsh: 4.1, risk_class: 'Normal' },
-  { date: 'Jun', tsh: 3.8, risk_class: 'Normal' },
-];
 
-export const mockHistory: HistoryEntry[] = [
-  {
-    date: '2026-06-01',
-    risk_class: 'Normal',
-    tsh: 3.8,
-    notes: 'All values within ICMR normal range. Continue current regimen.',
-  },
-  {
-    date: '2026-03-15',
-    risk_class: 'Mild',
-    tsh: 5.3,
-    notes: 'Slightly elevated TSH. Dietitian referral made. Iodized salt advised.',
-  },
-  {
-    date: '2025-12-20',
-    risk_class: 'Mild',
-    tsh: 5.8,
-    notes: 'Menstrual irregularity flagged. PCOS co-assessment recommended.',
-  },
-  {
-    date: '2025-09-05',
-    risk_class: 'Moderate',
-    tsh: 7.2,
-    notes: 'TSH elevated. e-Sanjeevani telemedicine consultation scheduled.',
-  },
-  {
-    date: '2025-06-10',
-    risk_class: 'Moderate',
-    tsh: 6.9,
-    notes: 'Initial assessment. Medication (Levothyroxine 25mcg) prescribed.',
-  },
-];
 
 export const mockFacilities: Facility[] = [
   {

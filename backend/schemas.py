@@ -1,7 +1,7 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, Field
 from typing import Literal
 import re
-
+from datetime import datetime
 class UserCreate(BaseModel):
     username: str
     password: str
@@ -40,13 +40,14 @@ class Token(BaseModel):
     token_type: str
     user: UserResponse
 
-class HealthRecordBase(BaseModel):
-    age: float | None = None
-    bmi: float | None = None
-    tsh: float | None = None
-    t3: float | None = None
-    t4: float | None = None
-    severity_score: int | None = None
+class AssessmentCreateRequest(BaseModel):
+    # Strictly input data
+    age: float | None = Field(None, ge=10, le=120)
+    bmi: float | None = Field(None, ge=10, le=60)
+    tsh: float | None = Field(None, ge=0, le=100)
+    t3: float | None = Field(None, ge=0, le=20)
+    t4: float | None = Field(None, ge=0, le=20)
+    severity_score: int | None = Field(None, ge=0, le=10)
     fatigue: bool = False
     hair_fall: bool = False
     weight_gain: bool = False
@@ -63,19 +64,19 @@ class HealthRecordBase(BaseModel):
     diet_pref: str | None = None
     iodine_zone: str | None = None
 
-    # AI assessment results
-    risk_class: str | None = None
-    risk_score: float | None = None
-    emergency_flag: bool = False
-    referral_tier: str | None = None
-    notes: str | None = None
-
-class HealthRecordCreate(HealthRecordBase):
-    pass
-
-class HealthRecordResponse(HealthRecordBase):
+class AssessmentResponse(AssessmentCreateRequest):
     id: str
     user_id: str
+    created_at: datetime
+    updated_at: datetime
+    
+    # AI Prediction Outputs
+    model_version: str
+    risk_class: str
+    risk_score: float
+    emergency_flag: bool
+    top_features: str | None = None
+    recommendations_json: str | None = None
 
     class Config:
         from_attributes = True

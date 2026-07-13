@@ -81,32 +81,16 @@ export interface SHAPValues {
 }
 
 export interface RiskAssessment {
-  assessment_id: string;
-  intake_id: string;
   risk_class: RiskClass;
-  rf_confidence: number;
-  xgb_confidence: number;
-  ensemble_confidence: number;
-  shap_values: SHAPValues;
-  top_shap_feature_1: string;
-  top_shap_value_1: number;
-  top_shap_feature_2: string;
-  top_shap_value_2: number;
-  top_shap_feature_3: string;
-  top_shap_value_3: number;
+  risk_score: number;
   emergency_flag: boolean;
-  assessed_at: string;
+  top_features: { feature: string; value: number }[];
 }
 
 // Recommendations
 export interface RecommendationSet {
-  rec_id: string;
-  assessment_id: string;
-  diet_recommendations: string[];
-  exercise_recommendations: string[];
-  lifestyle_recommendations: string[];
-  followup_interval_days: number;
-  followup_test_required: string;
+  diet: string[];
+  lifestyle: string[];
   referral_tier: ReferralTier;
   emergency_flag: boolean;
   referral_trigger?: string;

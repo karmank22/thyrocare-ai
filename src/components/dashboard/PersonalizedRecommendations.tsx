@@ -6,7 +6,7 @@ interface Props {
   recommendations: RecommendationSet;
 }
 
-type Tab = 'diet' | 'exercise' | 'lifestyle' | 'followup';
+type Tab = 'diet' | 'lifestyle' | 'followup';
 
 export default function PersonalizedRecommendations({ recommendations }: Props) {
   const { t } = useTranslation();
@@ -14,19 +14,16 @@ export default function PersonalizedRecommendations({ recommendations }: Props) 
 
   const tabs: { key: Tab; label: string; icon: string }[] = [
     { key: 'diet', label: t('dashboard.diet'), icon: '🥗' },
-    { key: 'exercise', label: t('dashboard.exercise'), icon: '🧘' },
     { key: 'lifestyle', label: t('dashboard.lifestyle'), icon: '🌿' },
     { key: 'followup', label: t('dashboard.followup'), icon: '📅' },
   ];
 
   const contentMap: Record<Tab, string[]> = {
-    diet: recommendations.diet_recommendations,
-    exercise: recommendations.exercise_recommendations,
-    lifestyle: recommendations.lifestyle_recommendations,
+    diet: recommendations.diet || [],
+    lifestyle: recommendations.lifestyle || [],
     followup: [
-      `📅 Repeat test in ${recommendations.followup_interval_days} days`,
-      `🔬 Tests required: ${recommendations.followup_test_required}`,
-      `📊 Risk level: ${recommendations.referral_tier === 'none' ? 'Self-monitor' : recommendations.referral_tier}`,
+      `📅 Follow up based on physician's advice`,
+      `📊 Referral level: ${recommendations.referral_tier === 'none' ? 'Self-monitor' : recommendations.referral_tier}`,
       '💊 Take medication at the same time each day (if prescribed)',
       '📝 Keep a symptom diary to share at your next appointment',
     ],
@@ -61,13 +58,6 @@ export default function PersonalizedRecommendations({ recommendations }: Props) 
             <p className="rec-text">{item}</p>
           </div>
         ))}
-      </div>
-
-      {/* Follow-up reminder chip */}
-      <div className="followup-chip">
-        <span>⏰</span>
-        Next assessment in <strong>{recommendations.followup_interval_days} days</strong>
-        &nbsp;—&nbsp;{recommendations.followup_test_required}
       </div>
     </div>
   );

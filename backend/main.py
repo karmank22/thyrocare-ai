@@ -1,8 +1,17 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import models
 from database import engine
-from routes import auth, records
+from routes import auth, assessments
+
+# Configure structured logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+logger = logging.getLogger("thyrocare.main")
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -17,7 +26,7 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-app.include_router(records.router)
+app.include_router(assessments.router)
 
 @app.get("/")
 def read_root():

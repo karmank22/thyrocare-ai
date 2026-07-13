@@ -86,12 +86,7 @@ export default function IntakeFormPage() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    // Simulate AI processing delay
-    await new Promise(r => setTimeout(r, 1800));
-    const assessment = computeRiskAssessment(form);
-    const recs = generateRecommendations(assessment, form);
     
-    // Save to DB
     try {
       const token = localStorage.getItem('thyrocare_token');
       if (token) {
@@ -103,13 +98,9 @@ export default function IntakeFormPage() {
           t3: form.t3 ? parseFloat(form.t3) : null,
           t4: form.t4 ? parseFloat(form.t4) : null,
           severity_score: form.severity_score ? parseInt(form.severity_score) : null,
-          risk_class: assessment.risk_class,
-          risk_score: assessment.risk_score,
-          emergency_flag: assessment.emergency_flag,
-          referral_tier: recs.referral_tier,
-          notes: ''
         };
-        await fetch('http://localhost:8000/api/records/', {
+        
+        const res = await fetch('http://localhost:8000/api/assessments/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -117,16 +108,21 @@ export default function IntakeFormPage() {
           },
           body: JSON.stringify(payload)
         });
+
+        if (res.ok) {
+          const data = await res.json();
+          // Clear context to force Dashboard to fetch the latest
+          setAssessment(null);
+          setRecommendations(null);
+          setFormData(null);
+        }
       }
     } catch (e) {
-      console.error('Failed to save record:', e);
+      console.error('Failed to save assessment:', e);
+    } finally {
+      setLoading(false);
+      navigate('/dashboard');
     }
-
-    setAssessment(assessment);
-    setRecommendations(recs);
-    setFormData(form);
-    setLoading(false);
-    navigate('/dashboard');
   };
 
   const canProceed = () => {

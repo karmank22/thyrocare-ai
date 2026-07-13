@@ -1,0 +1,50 @@
+.history-page {
+  background: var(--color-bg-primary);
+  min-height: 100vh;
+  padding-bottom: var(--space-2xl);
+  color: var(--text-primary);
+}
+
+.history-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.history-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.badge-success {
+  background: rgba(46, 213, 115, 0.2);
+  color: #2ed573;
+}
+
+.badge-warning {
+  background: rgba(255, 211, 42, 0.2);
+  color: #ffa502;
+}
+
+.badge-orange {
+  background: rgba(255, 121, 63, 0.2);
+  color: #ff793f;
+}
+
+.badge-danger {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+}
+
+.history-grid-css {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}

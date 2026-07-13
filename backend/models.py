@@ -16,25 +16,22 @@ class User(Base):
     role = Column(String, nullable=False)  # 'patient' or 'worker'
 
 
-class HealthRecord(Base):
-    """Stores every screening submission for a user — powers personalized history."""
-    __tablename__ = "health_records"
+class Assessment(Base):
+    """Stores full raw data and the AI prediction result with versioning."""
+    __tablename__ = "assessments"
 
     id = Column(String, primary_key=True, index=True, default=generate_uuid)
     user_id = Column(String, index=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    # Basic info
+    # 1. Raw Input Data
     age = Column(Float, nullable=True)
     bmi = Column(Float, nullable=True)
-
-    # Lab values
     tsh = Column(Float, nullable=True)
     t3 = Column(Float, nullable=True)
     t4 = Column(Float, nullable=True)
     severity_score = Column(Integer, nullable=True)
-
-    # Symptoms (boolean flags)
     fatigue = Column(Boolean, default=False)
     hair_fall = Column(Boolean, default=False)
     weight_gain = Column(Boolean, default=False)
@@ -43,21 +40,20 @@ class HealthRecord(Base):
     mood_changes = Column(Boolean, default=False)
     constipation = Column(Boolean, default=False)
     dry_skin = Column(Boolean, default=False)
-
-    # Medical history
     family_history_thyroid = Column(Boolean, default=False)
     pcos_history = Column(Boolean, default=False)
     pregnancy_status = Column(Boolean, default=False)
     postpartum_flag = Column(Boolean, default=False)
     medication_current = Column(String, nullable=True)
-
-    # Lifestyle
     diet_pref = Column(String, nullable=True)
     iodine_zone = Column(String, nullable=True)
 
-    # AI assessment results
-    risk_class = Column(String, nullable=True)      # Normal | Mild | Moderate | High
-    risk_score = Column(Float, nullable=True)
+    # 2. AI Prediction Data
+    model_version = Column(String, nullable=False, default="Ensemble-v1.0")
+    risk_class = Column(String, nullable=False)  # Normal | Mild | Moderate | High
+    risk_score = Column(Float, nullable=False)   # 0.0 to 1.0 confidence/score
     emergency_flag = Column(Boolean, default=False)
-    referral_tier = Column(String, nullable=True)
-    notes = Column(String, nullable=True)           # Auto-generated summary note
+    
+    # We can store JSON as String for simple sqlite/neon compatibility without extra dialect dependencies
+    top_features = Column(String, nullable=True) # JSON string of SHAP features
+    recommendations_json = Column(String, nullable=True) # JSON string of recommendations

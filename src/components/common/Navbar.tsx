@@ -58,6 +58,9 @@ export default function Navbar() {
               <Link to="/dashboard" className={`navbar-link ${isActive('/dashboard') ? 'active' : ''}`}>
                 {t('nav.dashboard')}
               </Link>
+              <Link to="/history" className={`navbar-link ${isActive('/history') ? 'active' : ''}`}>
+                History
+              </Link>
             </>
           )}
           {currentUser?.role === 'worker' && (
@@ -174,6 +177,7 @@ export default function Navbar() {
             <>
               <Link to="/screening" className="mobile-link" onClick={() => setMobileOpen(false)}>{t('nav.screening')}</Link>
               <Link to="/dashboard" className="mobile-link" onClick={() => setMobileOpen(false)}>{t('nav.dashboard')}</Link>
+              <Link to="/history" className="mobile-link" onClick={() => setMobileOpen(false)}>{t('nav.history', 'History')}</Link>
             </>
           )}
           {currentUser?.role === 'worker' && (

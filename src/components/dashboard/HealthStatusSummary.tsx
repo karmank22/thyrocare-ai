@@ -34,19 +34,16 @@ const FEATURE_LABELS: Record<string, string> = {
 
 export default function HealthStatusSummary({ assessment }: Props) {
   const { t } = useTranslation();
-  const { risk_class, rf_confidence, xgb_confidence, ensemble_confidence, shap_values, emergency_flag } = assessment;
-  const riskColor = RISK_COLORS[risk_class];
+  const { risk_class, risk_score, emergency_flag, top_features } = assessment;
+  const riskColor = RISK_COLORS[risk_class] || RISK_COLORS.Normal;
 
-  // Top 5 SHAP features for the chart
-  const shapData = Object.entries(shap_values)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 5)
-    .map(([key, value]) => ({
-      name: FEATURE_LABELS[key] || key,
-      value: parseFloat((value * 100).toFixed(1)),
-    }));
+  // Top SHAP features for the chart
+  const shapData = top_features?.map(f => ({
+      name: FEATURE_LABELS[f.feature] || f.feature,
+      value: parseFloat((f.value * 100).toFixed(1)),
+  })) || [];
 
-  const riskLabel = t(`dashboard.risk_${risk_class.toLowerCase()}`);
+  const riskLabel = t(`dashboard.risk_${risk_class?.toLowerCase() || 'normal'}`);
 
   return (
     <div className="glass-card panel-card panel-status animate-fadeInUp" id="panel-health-status">
@@ -57,8 +54,8 @@ export default function HealthStatusSummary({ assessment }: Props) {
 
       {/* Main risk display */}
       <div className="status-main" style={{ borderColor: riskColor }}>
-        <div className="status-icon-large">{RISK_ICONS[risk_class]}</div>
-        <div className={`risk-badge risk-badge-${risk_class.toLowerCase()} status-badge`}>
+        <div className="status-icon-large">{RISK_ICONS[risk_class] || '✅'}</div>
+        <div className={`risk-badge risk-badge-${risk_class?.toLowerCase() || 'normal'} status-badge`}>
           {riskLabel}
         </div>
         {emergency_flag && (
@@ -68,31 +65,13 @@ export default function HealthStatusSummary({ assessment }: Props) {
 
       {/* Confidence scores */}
       <div className="confidence-grid">
-        <div className="conf-item">
-          <span className="conf-label">Random Forest</span>
-          <span className="conf-value" style={{ color: riskColor }}>
-            {(rf_confidence * 100).toFixed(1)}%
+        <div className="conf-item" style={{ gridColumn: 'span 3', textAlign: 'center' }}>
+          <span className="conf-label">AI Model Confidence</span>
+          <span className="conf-value conf-value-big" style={{ color: riskColor, display: 'block', marginTop: '4px' }}>
+            {((risk_score || 0) * 100).toFixed(1)}%
           </span>
-          <div className="conf-bar">
-            <div className="conf-bar-fill" style={{ width: `${rf_confidence * 100}%`, background: riskColor }} />
-          </div>
-        </div>
-        <div className="conf-item">
-          <span className="conf-label">XGBoost</span>
-          <span className="conf-value" style={{ color: riskColor }}>
-            {(xgb_confidence * 100).toFixed(1)}%
-          </span>
-          <div className="conf-bar">
-            <div className="conf-bar-fill" style={{ width: `${xgb_confidence * 100}%`, background: riskColor }} />
-          </div>
-        </div>
-        <div className="conf-item">
-          <span className="conf-label">Ensemble (Final)</span>
-          <span className="conf-value conf-value-big" style={{ color: riskColor }}>
-            {(ensemble_confidence * 100).toFixed(1)}%
-          </span>
-          <div className="conf-bar">
-            <div className="conf-bar-fill" style={{ width: `${ensemble_confidence * 100}%`, background: `linear-gradient(90deg, #00c896, #00a3ff)` }} />
+          <div className="conf-bar" style={{ marginTop: '12px' }}>
+            <div className="conf-bar-fill" style={{ width: `${(risk_score || 0) * 100}%`, background: `linear-gradient(90deg, #00c896, #00a3ff)` }} />
           </div>
         </div>
       </div>

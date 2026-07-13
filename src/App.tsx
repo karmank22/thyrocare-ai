@@ -15,6 +15,7 @@ import './components/dashboard/panels.css';
 import LandingPage from './pages/LandingPage';
 import IntakeFormPage from './pages/IntakeFormPage';
 import DashboardPage from './pages/DashboardPage';
+import HistoryPage from './pages/HistoryPage';
 import HealthWorkerPage from './pages/HealthWorkerPage';
 import LoginPage from './pages/LoginPage';
 
@@ -137,6 +138,14 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['patient']}>
                 <DashboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/history" 
+            element={
+              <ProtectedRoute allowedRoles={['patient']}>
+                <HistoryPage />
               </ProtectedRoute>
             } 
           />

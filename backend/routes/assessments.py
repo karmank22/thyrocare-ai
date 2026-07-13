@@ -1,0 +1,64 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import Annotated, List
+
+import models, schemas, database
+from routes.auth import get_current_user
+from services.assessment_service import AssessmentService
+
+router = APIRouter(prefix="/api/assessments", tags=["assessments"])
+
+@router.post("/", response_model=schemas.AssessmentResponse, status_code=status.HTTP_201_CREATED)
+def create_assessment(
+    request_data: schemas.AssessmentCreateRequest, 
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(database.get_db)
+):
+    """Creates a new assessment by running the AI model on raw input data."""
+    # Convert Pydantic model to dict
+    raw_dict = request_data.model_dump(exclude_unset=True)
+    
+    # Save via Service Layer
+    db_assessment = AssessmentService.create_assessment(db, current_user, raw_dict)
+    return db_assessment
+
+@router.get("/", response_model=List[schemas.AssessmentResponse])
+def get_assessments(
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(database.get_db)
+):
+    """Returns all assessments for the authenticated user."""
+    return AssessmentService.get_user_assessments(db, current_user)
+
+@router.get("/latest")
+def get_latest_assessment(
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(database.get_db)
+):
+    """Returns the most recent assessment. Returns 200 OK with hasReport false if empty."""
+    latest = AssessmentService.get_latest_assessment(db, current_user)
+    if not latest:
+        return {"hasReport": False, "report": None}
+    
+    # We must manually map the DB model to the response dict here since we are returning a custom dict
+    response_model = schemas.AssessmentResponse.model_validate(latest)
+    return {"hasReport": True, "report": response_model}
+
+@router.get("/{assessment_id}", response_model=schemas.AssessmentResponse)
+def get_assessment(
+    assessment_id: str,
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(database.get_db)
+):
+    """Returns a specific assessment, verifying ownership."""
+    return AssessmentService.get_assessment_by_id(db, current_user, assessment_id)
+
+@router.delete("/{assessment_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_assessment(
+    assessment_id: str,
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(database.get_db)
+):
+    """Deletes a specific assessment, verifying ownership."""
+    AssessmentService.delete_assessment(db, current_user, assessment_id)
+    return None
