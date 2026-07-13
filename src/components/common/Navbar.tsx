@@ -148,9 +148,9 @@ export default function Navbar() {
             </Link>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+              <Link to="/profile" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none' }} className="navbar-link">
                 Hi, {currentUser.preferred_name}
-              </span>
+              </Link>
               <button onClick={logout} className="btn btn-secondary btn-sm navbar-cta">
                 {t('nav.logout', 'Logout')}
               </button>
@@ -187,9 +187,9 @@ export default function Navbar() {
             <Link to="/login" className="mobile-link" style={{ color: 'var(--text-accent)' }} onClick={() => setMobileOpen(false)}>{t('nav.login', 'Login')}</Link>
           ) : (
             <>
-              <div className="mobile-link" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+              <Link to="/profile" className="mobile-link" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
                 Hi, {currentUser.preferred_name}
-              </div>
+              </Link>
               <button className="mobile-link" style={{ color: 'var(--risk-high)', textAlign: 'left', width: '100%' }} onClick={() => { logout(); setMobileOpen(false); }}>
                 {t('nav.logout', 'Logout')}
               </button>

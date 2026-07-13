@@ -39,13 +39,14 @@ export default function DashboardPage() {
   const [recommendations, setRecommendations] = useState(ctxRecs);
   const [explanation, setExplanation] = useState('');
   const [goals, setGoals] = useState(mockWellnessGoals);
+  const [trendData, setTrendData] = useState<any[]>([]);
   
   const [loading, setLoading] = useState(!ctxAssessment);
   const [hasRecord, setHasRecord] = useState(!!ctxAssessment);
 
   useEffect(() => {
     const fetchRecord = async () => {
-      if (ctxAssessment) {
+      if (ctxAssessment && trendData.length > 0) {
         setLoading(false);
         return;
       }
@@ -57,12 +58,13 @@ export default function DashboardPage() {
       }
 
       try {
-        const res = await fetch(`${API_BASE_URL}/api/assessments/latest`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const [resLatest, resHistory] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/assessments/latest`, { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch(`${API_BASE_URL}/api/assessments/`, { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
         
-        if (res.ok) {
-          const data = await res.json();
+        if (resLatest.ok) {
+          const data = await resLatest.json();
           if (!data.hasReport || !data.report) {
             setHasRecord(false);
           } else {
@@ -78,9 +80,7 @@ export default function DashboardPage() {
             
             const fetchedRecs = report.recommendations_json 
               ? JSON.parse(report.recommendations_json) 
-              : {
-                  diet: [], lifestyle: [], referral_tier: 'none'
-                };
+              : { diet: [], lifestyle: [], referral_tier: 'none' };
 
             setAssessment(fetchedAssessment);
             setRecommendations(fetchedRecs);
@@ -88,6 +88,21 @@ export default function DashboardPage() {
             setCtxRecs(fetchedRecs);
             
             setCtxFormData({ tsh: report.tsh?.toString() || '0' } as any);
+
+            // Process History
+            if (resHistory.ok) {
+              const historyData = await resHistory.json();
+              // Sort chronologically
+              const sortedHistory = historyData.sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+              const mappedTrend = sortedHistory.map((item: any) => ({
+                date: new Date(item.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: '2-digit' }),
+                tsh: item.tsh || 0,
+                t3: item.t3 || 0,
+                t4: item.t4 || 0,
+                risk_class: item.risk_class || 'Normal',
+              }));
+              setTrendData(mappedTrend);
+            }
           }
         } else {
           setHasRecord(false);
@@ -240,7 +255,7 @@ export default function DashboardPage() {
                   <PersonalizedRecommendations recommendations={recommendations} />
                 </div>
                 <div className="dashboard-col-narrow">
-                  <TSHTrendChart data={[]} />
+                  <TSHTrendChart data={trendData} />
                 </div>
               </div>
 

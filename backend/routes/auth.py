@@ -97,3 +97,33 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Sessio
 @router.get("/me", response_model=schemas.UserResponse)
 def read_users_me(current_user: Annotated[models.User, Depends(get_current_user)]):
     return current_user
+
+@router.put("/me", response_model=schemas.UserResponse)
+def update_user_me(user_update: schemas.UserUpdate, current_user: Annotated[models.User, Depends(get_current_user)], db: Session = Depends(database.get_db)):
+    current_user.preferred_name = user_update.preferred_name
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+@router.put("/password")
+def update_password(password_update: schemas.PasswordUpdate, current_user: Annotated[models.User, Depends(get_current_user)], db: Session = Depends(database.get_db)):
+    if not verify_password(password_update.current_password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect current password"
+        )
+    
+    current_user.hashed_password = get_password_hash(password_update.new_password)
+    db.commit()
+    return {"message": "Password updated successfully"}
+
+@router.delete("/me")
+def delete_user_me(current_user: Annotated[models.User, Depends(get_current_user)], db: Session = Depends(database.get_db)):
+    # Delete all assessments associated with the user
+    db.query(models.Assessment).filter(models.Assessment.user_id == current_user.id).delete()
+    
+    # Delete the user
+    db.delete(current_user)
+    db.commit()
+    return {"message": "User account and all associated data deleted successfully"}
+

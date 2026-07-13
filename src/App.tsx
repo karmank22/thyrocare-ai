@@ -19,6 +19,7 @@ import HistoryPage from './pages/HistoryPage';
 import AssessmentDetailsPage from './pages/AssessmentDetailsPage';
 import HealthWorkerPage from './pages/HealthWorkerPage';
 import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
 
 // Context
 import { AppContext } from './contexts/AppContext';
@@ -156,6 +157,14 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['patient']}>
                 <AssessmentDetailsPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute allowedRoles={['patient', 'worker']}>
+                <ProfilePage />
               </ProtectedRoute>
             } 
           />

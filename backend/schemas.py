@@ -40,6 +40,25 @@ class Token(BaseModel):
     token_type: str
     user: UserResponse
 
+class UserUpdate(BaseModel):
+    preferred_name: str
+
+class PasswordUpdate(BaseModel):
+    current_password: str
+    new_password: str
+
+    @field_validator('new_password')
+    @classmethod
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        if not any(char.isdigit() for char in v):
+            raise ValueError('Password must contain at least one number')
+        if not any(char.islower() for char in v):
+            raise ValueError('Password must contain at least one lowercase letter')
+        return v
+
+
 class AssessmentCreateRequest(BaseModel):
     # Strictly input data
     age: float | None = Field(None, ge=10, le=120)
