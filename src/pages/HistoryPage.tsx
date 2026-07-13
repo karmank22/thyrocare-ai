@@ -2,15 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import { API_BASE_URL } from '../config';
+import AssessmentComparisonModal from '../components/dashboard/AssessmentComparisonModal';
 import './HistoryPage.css';
 
-interface AssessmentRecord {
+export interface AssessmentRecord {
   id: string;
   created_at: string;
   model_version: string;
   risk_class: string;
   risk_score: number;
   emergency_flag: boolean;
+  tsh: number;
+  t3: number;
+  t4: number;
+  bmi: number;
+  age: number;
+  recommendations_json: string | null;
 }
 
 export default function HistoryPage() {
@@ -18,6 +25,10 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
   const [assessments, setAssessments] = useState<AssessmentRecord[]>([]);
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  
+  // Comparison State
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -63,6 +74,26 @@ export default function HistoryPage() {
     }
   };
 
+  const handleToggleSelection = (id: string) => {
+    setSelectedIds(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(item => item !== id);
+      } else {
+        if (prev.length < 2) {
+          return [...prev, id];
+        }
+        return prev;
+      }
+    });
+  };
+
+  const selectedAssessments = assessments.filter(a => selectedIds.includes(a.id));
+  
+  // Sort selected assessments chronologically for comparison (older vs newer)
+  const chronologicalSelection = [...selectedAssessments].sort((a, b) => 
+    new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  );
+
   return (
     <div className="history-page">
       <Navbar />
@@ -104,31 +135,82 @@ export default function HistoryPage() {
           </div>
         ) : (
           <div className="history-list" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-            {sortedAssessments.map(record => (
-              <div key={record.id} className="glass-card history-card" style={{ padding: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '4px' }}>
-                    {new Date(record.created_at).toLocaleDateString('en-IN', {
-                      year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                    })}
+            {sortedAssessments.map(record => {
+              const isSelected = selectedIds.includes(record.id);
+              const isDisabled = !isSelected && selectedIds.length >= 2;
+              
+              return (
+                <div 
+                  key={record.id} 
+                  className={`glass-card history-card ${isSelected ? 'selected' : ''}`} 
+                  style={{ padding: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-lg)' }}>
+                    <div>
+                      <input 
+                        type="checkbox" 
+                        className="checkbox-custom"
+                        checked={isSelected}
+                        disabled={isDisabled}
+                        onChange={() => handleToggleSelection(record.id)}
+                        aria-label="Select for comparison"
+                      />
+                    </div>
+                    <div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '14px', marginBottom: '4px' }}>
+                        {new Date(record.created_at).toLocaleDateString('en-IN', {
+                          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                        })}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                        <strong style={{ fontSize: '18px' }}>Assessment ID: {record.id.substring(0, 8)}...</strong>
+                        {getRiskBadge(record.risk_class, record.emergency_flag)}
+                      </div>
+                      <div style={{ display: 'flex', gap: '16px', fontSize: '14px', color: 'var(--text-muted)' }}>
+                        <span>🧠 AI Engine: {record.model_version}</span>
+                        <span>Confidence: {(record.risk_score * 100).toFixed(1)}%</span>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                    <strong style={{ fontSize: '18px' }}>Assessment ID: {record.id.substring(0, 8)}...</strong>
-                    {getRiskBadge(record.risk_class, record.emergency_flag)}
-                  </div>
-                  <div style={{ display: 'flex', gap: '16px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                    <span>🧠 AI Engine: {record.model_version}</span>
-                    <span>Confidence: {(record.risk_score * 100).toFixed(1)}%</span>
+                  <div>
+                    <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/assessment/${record.id}`)}>View Details</button>
                   </div>
                 </div>
-                <div>
-                  <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/assessment/${record.id}`)}>View Details</button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
+
+      {selectedIds.length > 0 && (
+        <div className="compare-action-bar">
+          <div className={`compare-action-text ${selectedIds.length === 1 ? 'error' : ''}`}>
+            {selectedIds.length === 1 
+              ? 'Select one more assessment to begin comparison.' 
+              : 'Two assessments selected for comparison.'}
+          </div>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button className="btn btn-secondary btn-sm" onClick={() => setSelectedIds([])}>
+              Cancel
+            </button>
+            <button 
+              className="btn btn-primary btn-sm" 
+              disabled={selectedIds.length !== 2}
+              onClick={() => setIsModalOpen(true)}
+            >
+              Compare Assessments
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isModalOpen && chronologicalSelection.length === 2 && (
+        <AssessmentComparisonModal 
+          older={chronologicalSelection[0]} 
+          newer={chronologicalSelection[1]} 
+          onClose={() => setIsModalOpen(false)} 
+        />
+      )}
     </div>
   );
 }

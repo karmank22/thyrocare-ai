@@ -1,50 +1,94 @@
 .history-page {
-  background: var(--color-bg-primary);
   min-height: 100vh;
   padding-bottom: var(--space-2xl);
-  color: var(--text-primary);
 }
 
-.history-card {
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.history-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.badge-success {
-  background: rgba(46, 213, 115, 0.2);
-  color: #2ed573;
-}
-
-.badge-warning {
-  background: rgba(255, 211, 42, 0.2);
-  color: #ffa502;
-}
-
-.badge-orange {
-  background: rgba(255, 121, 63, 0.2);
-  color: #ff793f;
-}
-
-.badge-danger {
-  background: rgba(255, 71, 87, 0.2);
-  color: #ff4757;
+.history-wrap {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .history-grid-css {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+}
+
+.history-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.history-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.history-card.selected {
+  border-color: var(--color-primary);
+  background-color: rgba(0, 200, 150, 0.03);
+}
+
+.checkbox-custom {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-bg-primary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox-custom:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkbox-custom:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-custom:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.compare-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-md) var(--space-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+  z-index: 100;
+  transform: translateY(100%);
+  animation: slideUp 0.3s forwards ease-out;
+}
+
+@keyframes slideUp {
+  to { transform: translateY(0); }
+}
+
+.compare-action-text {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.compare-action-text.error {
+  color: #ef4444;
 }
