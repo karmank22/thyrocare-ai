@@ -5,19 +5,40 @@
 
 .profile-wrap {
   margin-top: var(--space-2xl);
-  max-width: 800px;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.profile-header {
+.profile-header-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
   margin-bottom: var(--space-xl);
 }
 
-.profile-title {
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 2.5rem;
+  color: white;
   font-weight: 700;
-  margin-bottom: var(--space-xs);
+  box-shadow: 0 10px 25px -5px rgba(0, 200, 150, 0.4);
+}
+
+.profile-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, var(--text-primary), var(--color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .profile-subtitle {
@@ -25,38 +46,95 @@
   font-size: 1.1rem;
 }
 
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .profile-section {
   padding: var(--space-xl);
-  margin-bottom: var(--space-lg);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .profile-section h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   margin-bottom: var(--space-lg);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.profile-section-icon {
+  color: var(--color-primary);
+  background: rgba(0, 200, 150, 0.1);
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: flex;
 }
 
 .profile-form-group {
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-lg);
 }
 
 .profile-form-group label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.profile-form-group .form-control {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+}
+
+.profile-form-group .form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.1);
 }
 
 .danger-zone {
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.02) 0%, rgba(239, 68, 68, 0.05) 100%);
+  margin-top: var(--space-lg);
 }
 
 .danger-zone h2 {
   color: #ef4444;
 }
 
-.danger-actions {
-  margin-top: var(--space-md);
+.danger-zone .profile-section-icon {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
+
+.danger-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-lg);
+}
+
+.form-actions {
+  margin-top: auto;
+  padding-top: var(--space-lg);
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+

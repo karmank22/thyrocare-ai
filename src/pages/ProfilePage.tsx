@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { User, Lock, AlertTriangle, Save, Trash2 } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import { useApp } from '../contexts/AppContext';
 import { API_BASE_URL } from '../config';
@@ -118,96 +119,131 @@ export default function ProfilePage() {
     }
   };
 
+  const initial = currentUser?.preferred_name ? currentUser.preferred_name.charAt(0).toUpperCase() : 'U';
+
   return (
     <div className="profile-page">
       <Navbar />
       <div className="profile-wrap container">
-        <div className="profile-header animate-fadeInUp">
-          <h1 className="profile-title">Profile Settings</h1>
-          <p className="profile-subtitle">Manage your account and preferences</p>
+        
+        {/* Header Section with Avatar */}
+        <div className="glass-card profile-header-card animate-fadeInUp">
+          <div className="profile-avatar">
+            {initial}
+          </div>
+          <div>
+            <h1 className="profile-title">{currentUser?.preferred_name}</h1>
+            <p className="profile-subtitle">@{currentUser?.username} • {currentUser?.role === 'patient' ? 'Patient Portal' : 'Worker Portal'}</p>
+          </div>
         </div>
 
-        <div className="glass-card profile-section animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-          <h2>👤 Personal Information</h2>
-          <form onSubmit={handleUpdateName}>
-            <div className="form-group profile-form-group">
-              <label>Username (Cannot be changed)</label>
-              <input type="text" className="form-control" value={currentUser?.username || ''} disabled />
-            </div>
-            <div className="form-group profile-form-group">
-              <label>Preferred Name</label>
-              <input 
-                type="text" 
-                className="form-control" 
-                value={preferredName} 
-                onChange={(e) => setPreferredName(e.target.value)}
-                required
-              />
-            </div>
-            {nameStatus.error && <div className="alert alert-danger" style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: '4px' }}>{nameStatus.error}</div>}
-            {nameStatus.success && <div className="alert alert-success" style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: '4px', backgroundColor: 'rgba(0,200,150,0.1)', color: 'var(--color-primary)', border: '1px solid rgba(0,200,150,0.3)' }}>{nameStatus.success}</div>}
-            <button type="submit" className="btn btn-primary" disabled={nameStatus.loading} style={{ marginTop: '1rem' }}>
-              {nameStatus.loading ? 'Saving...' : 'Save Changes'}
-            </button>
-          </form>
+        <div className="profile-grid">
+          {/* Left Column: Personal Info */}
+          <div className="glass-card profile-section animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+            <h2>
+              <span className="profile-section-icon"><User size={20} /></span>
+              Personal Information
+            </h2>
+            <form onSubmit={handleUpdateName} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div className="form-group profile-form-group">
+                <label>Username</label>
+                <input type="text" className="form-control" value={currentUser?.username || ''} disabled style={{ opacity: 0.7 }} />
+              </div>
+              <div className="form-group profile-form-group">
+                <label>Preferred Name</label>
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  value={preferredName} 
+                  onChange={(e) => setPreferredName(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="form-actions">
+                {nameStatus.error && <div className="alert alert-danger mb-3">{nameStatus.error}</div>}
+                {nameStatus.success && <div className="alert alert-success mb-3">{nameStatus.success}</div>}
+                <button type="submit" className="btn btn-primary btn-icon" disabled={nameStatus.loading}>
+                  <Save size={18} /> {nameStatus.loading ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Right Column: Security */}
+          <div className="glass-card profile-section animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+            <h2>
+              <span className="profile-section-icon"><Lock size={20} /></span>
+              Security Settings
+            </h2>
+            <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div className="form-group profile-form-group">
+                <label>Current Password</label>
+                <input 
+                  type="password" 
+                  className="form-control" 
+                  value={currentPassword} 
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group profile-form-group">
+                <label>New Password</label>
+                <input 
+                  type="password" 
+                  className="form-control" 
+                  value={newPassword} 
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+                <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>Min 8 chars, 1 number, 1 lowercase.</small>
+              </div>
+              <div className="form-group profile-form-group">
+                <label>Confirm New Password</label>
+                <input 
+                  type="password" 
+                  className="form-control" 
+                  value={confirmPassword} 
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="form-actions">
+                {passwordStatus.error && <div className="alert alert-danger mb-3">{passwordStatus.error}</div>}
+                {passwordStatus.success && <div className="alert alert-success mb-3">{passwordStatus.success}</div>}
+                <button type="submit" className="btn btn-primary btn-icon" disabled={passwordStatus.loading}>
+                  <Lock size={18} /> {passwordStatus.loading ? 'Updating...' : 'Update Password'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
-        <div className="glass-card profile-section animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-          <h2>🔒 Change Password</h2>
-          <form onSubmit={handleUpdatePassword}>
-            <div className="form-group profile-form-group">
-              <label>Current Password</label>
-              <input 
-                type="password" 
-                className="form-control" 
-                value={currentPassword} 
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="form-group profile-form-group">
-              <label>New Password</label>
-              <input 
-                type="password" 
-                className="form-control" 
-                value={newPassword} 
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-              <small style={{ color: 'var(--text-muted)' }}>Must be at least 8 characters, include a number and a lowercase letter.</small>
-            </div>
-            <div className="form-group profile-form-group">
-              <label>Confirm New Password</label>
-              <input 
-                type="password" 
-                className="form-control" 
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
-            {passwordStatus.error && <div className="alert alert-danger" style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: '4px' }}>{passwordStatus.error}</div>}
-            {passwordStatus.success && <div className="alert alert-success" style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: '4px', backgroundColor: 'rgba(0,200,150,0.1)', color: 'var(--color-primary)', border: '1px solid rgba(0,200,150,0.3)' }}>{passwordStatus.success}</div>}
-            <button type="submit" className="btn btn-primary" disabled={passwordStatus.loading} style={{ marginTop: '1rem' }}>
-              {passwordStatus.loading ? 'Updating...' : 'Update Password'}
-            </button>
-          </form>
-        </div>
-
+        {/* Danger Zone spans full width below grid */}
         <div className="glass-card profile-section danger-zone animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-          <h2>⚠️ Danger Zone</h2>
-          <p>Permanently delete your account and all associated health data. This action cannot be undone.</p>
-          {deleteStatus.error && <div className="alert alert-danger" style={{ marginTop: '1rem', padding: '0.5rem', borderRadius: '4px' }}>{deleteStatus.error}</div>}
-          <div className="danger-actions">
+          <h2>
+            <span className="profile-section-icon"><AlertTriangle size={20} /></span>
+            Danger Zone
+          </h2>
+          <p className="danger-text">
+            Permanently delete your account and all associated health data. 
+            This action <strong>cannot be undone</strong>. You will lose access to all your past thyroid assessments, trend charts, and generated insights immediately.
+          </p>
+          
+          {deleteStatus.error && <div className="alert alert-danger mb-3">{deleteStatus.error}</div>}
+          
+          <div>
             <button 
-              className="btn btn-danger" 
+              className="btn btn-danger btn-icon" 
               onClick={handleDeleteAccount}
               disabled={deleteStatus.loading}
             >
-              {deleteStatus.loading ? 'Deleting...' : 'Delete My Account'}
+              <Trash2 size={18} /> {deleteStatus.loading ? 'Deleting...' : 'Delete My Account'}
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );
