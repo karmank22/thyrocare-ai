@@ -190,28 +190,32 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
               
               <div className="hero-metrics-grid">
                 <div className="hero-metric-card">
-                  <span className="metric-label">Risk Shift</span>
-                  <span className="metric-value">
-                    {riskStatusText}
-                  </span>
+                  <div className="metric-card-icon"><Activity size={18} /></div>
+                  <div>
+                    <span className="metric-label">Risk Shift</span>
+                    <span className="metric-value">{riskStatusText}</span>
+                  </div>
                 </div>
                 <div className="hero-metric-card">
-                  <span className="metric-label">TSH Change</span>
-                  <span className="metric-value">
-                    {tshChange.diff > 0 ? '+' : ''}{tshChange.diff.toFixed(2)} mIU/L
-                  </span>
+                  <div className="metric-card-icon"><Droplet size={18} /></div>
+                  <div>
+                    <span className="metric-label">TSH Change</span>
+                    <span className="metric-value">{tshChange.diff > 0 ? '+' : ''}{tshChange.diff.toFixed(2)} mIU/L</span>
+                  </div>
                 </div>
                 <div className="hero-metric-card">
-                  <span className="metric-label">BMI Change</span>
-                  <span className="metric-value">
-                    {bmiChange.diff > 0 ? '+' : ''}{bmiChange.diff.toFixed(1)}
-                  </span>
+                  <div className="metric-card-icon"><Weight size={18} /></div>
+                  <div>
+                    <span className="metric-label">BMI Change</span>
+                    <span className="metric-value">{bmiChange.diff > 0 ? '+' : ''}{bmiChange.diff.toFixed(1)}</span>
+                  </div>
                 </div>
                 <div className="hero-metric-card">
-                  <span className="metric-label">Risk Score</span>
-                  <span className="metric-value">
-                    {riskScoreChange.diff > 0 ? '+' : ''}{riskScoreChange.diff.toFixed(0)} pts
-                  </span>
+                  <div className="metric-card-icon"><ShieldAlert size={18} /></div>
+                  <div>
+                    <span className="metric-label">Risk Score</span>
+                    <span className="metric-value">{riskScoreChange.diff > 0 ? '+' : ''}{riskScoreChange.diff.toFixed(0)} pts</span>
+                  </div>
                 </div>
               </div>
 
@@ -223,29 +227,29 @@ export default function AssessmentComparisonModal({ older, newer, onClose }: Pro
             {/* 2. Assessment Timeline */}
             <div className="timeline-section">
               <div className="timeline-card">
+                <div className="timeline-card-icon"><Calendar size={20} /></div>
                 <div className="timeline-label">Previous Assessment</div>
                 <div className="timeline-date-large">
-                  <Calendar size={18} color="var(--text-muted)" />
                   {new Date(older.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </div>
-                <div>{getRiskBadge(older.risk_class)}</div>
+                <div className="timeline-risk-badge">{getRiskBadge(older.risk_class)}</div>
               </div>
               
               <div className="timeline-connector">
-                <div className="connector-title">Comparison Period</div>
                 <div className="connector-line"></div>
-                <div className="connector-badge">
-                  {timeString}
+                <div className="connector-content">
+                  <div className="connector-title">Comparison Period</div>
+                  <div className="connector-badge">{timeString}</div>
                 </div>
               </div>
               
               <div className="timeline-card">
+                <div className="timeline-card-icon"><Calendar size={20} /></div>
                 <div className="timeline-label">Current Assessment</div>
                 <div className="timeline-date-large">
-                  <Calendar size={18} color="var(--color-primary)" />
                   {new Date(newer.created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </div>
-                <div>{getRiskBadge(newer.risk_class)}</div>
+                <div className="timeline-risk-badge">{getRiskBadge(newer.risk_class)}</div>
               </div>
             </div>
 
