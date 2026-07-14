@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, AlertTriangle, Save, Trash2 } from 'lucide-react';
+import { User, Lock, AlertTriangle, Save, Trash2, Calendar, FileText, Clock } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import { useApp } from '../contexts/AppContext';
 import { API_BASE_URL } from '../config';
@@ -18,11 +18,33 @@ export default function ProfilePage() {
   const [nameStatus, setNameStatus] = useState({ loading: false, error: '', success: '' });
   const [passwordStatus, setPasswordStatus] = useState({ loading: false, error: '', success: '' });
   const [deleteStatus, setDeleteStatus] = useState({ loading: false, error: '' });
+  
+  // Stats state
+  const [assessments, setAssessments] = useState<any[]>([]);
 
   useEffect(() => {
     if (currentUser) {
       setPreferredName(currentUser.preferred_name);
     }
+    
+    // Fetch assessments for stats
+    const fetchAssessments = async () => {
+      const token = localStorage.getItem('thyrocare_token');
+      if (!token) return;
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/assessments/`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setAssessments(data);
+        }
+      } catch (e) {
+        console.error("Failed to load assessments for stats", e);
+      }
+    };
+    
+    fetchAssessments();
   }, [currentUser]);
 
   const handleUpdateName = async (e: React.FormEvent) => {
@@ -121,6 +143,16 @@ export default function ProfilePage() {
 
   const initial = currentUser?.preferred_name ? currentUser.preferred_name.charAt(0).toUpperCase() : 'U';
 
+  // Calculate Stats
+  const reportsUploaded = assessments.length;
+  const sortedAssessments = [...assessments].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const lastAssessmentDate = sortedAssessments.length > 0 
+    ? new Date(sortedAssessments[0].created_at).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }) 
+    : 'None';
+  const memberSinceDate = sortedAssessments.length > 0 
+    ? new Date(sortedAssessments[sortedAssessments.length - 1].created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) 
+    : 'Today';
+
   return (
     <div className="profile-page">
       <Navbar />
@@ -128,12 +160,26 @@ export default function ProfilePage() {
         
         {/* Header Section with Avatar */}
         <div className="glass-card profile-header-card animate-fadeInUp">
-          <div className="profile-avatar">
-            {initial}
-          </div>
-          <div>
-            <h1 className="profile-title">{currentUser?.preferred_name}</h1>
-            <p className="profile-subtitle">@{currentUser?.username} • {currentUser?.role === 'patient' ? 'Patient Portal' : 'Worker Portal'}</p>
+          <div className="profile-header-top">
+            <div className="profile-avatar">
+              {initial}
+            </div>
+            <div>
+              <h1 className="profile-title">{currentUser?.preferred_name}</h1>
+              <p className="profile-subtitle">@{currentUser?.username} • {currentUser?.role === 'patient' ? 'Patient Portal' : 'Worker Portal'}</p>
+              
+              <div className="profile-stats-row">
+                <div className="profile-stat-badge">
+                  <Calendar size={14} /> Member since: <strong>{memberSinceDate}</strong>
+                </div>
+                <div className="profile-stat-badge">
+                  <FileText size={14} /> Reports uploaded: <strong>{reportsUploaded}</strong>
+                </div>
+                <div className="profile-stat-badge">
+                  <Clock size={14} /> Last assessment: <strong>{lastAssessmentDate}</strong>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
