@@ -156,6 +156,12 @@
 .stat-card {
   text-align: center;
   padding: var(--space-xl) var(--space-lg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 200, 150, 0.45);
+  border-color: rgba(0, 200, 150, 0.4);
 }
 .stat-value {
   font-size: 2.5rem;
