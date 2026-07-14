@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../contexts/AppContext';
@@ -12,7 +12,14 @@ export default function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useApp();
+  const { login, currentUser } = useApp();
+
+  useEffect(() => {
+    if (currentUser) {
+      const from = (location.state as any)?.from?.pathname || (currentUser.role === 'patient' ? '/dashboard' : '/worker');
+      navigate(from, { replace: true });
+    }
+  }, [currentUser, navigate, location]);
 
   const [activeTab, setActiveTab] = useState<LoginRole>('patient');
   const [authMode, setAuthMode] = useState<AuthMode>('login');
@@ -120,10 +127,6 @@ export default function LoginPage() {
 
     const data = await res.json();
     login(data.user, data.access_token);
-    
-    // Redirect
-    const from = (location.state as any)?.from?.pathname || (activeTab === 'patient' ? '/dashboard' : '/worker');
-    navigate(from, { replace: true });
   };
 
   return (
