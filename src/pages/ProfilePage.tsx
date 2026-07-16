@@ -141,11 +141,11 @@ export default function ProfilePage() {
     }
   };
 
-  let avatarContent = <User size={40} />;
+  let avatarContent: React.ReactNode = <User size={40} color="#ffffff" />;
   if (currentUser?.preferred_name && currentUser.preferred_name.trim().length > 0) {
-    avatarContent = <>{currentUser.preferred_name.trim().charAt(0).toUpperCase()}</>;
+    avatarContent = currentUser.preferred_name.trim().charAt(0).toUpperCase();
   } else if (currentUser?.username && currentUser.username.trim().length > 0) {
-    avatarContent = <>{currentUser.username.trim().charAt(0).toUpperCase()}</>;
+    avatarContent = currentUser.username.trim().charAt(0).toUpperCase();
   }
 
   // Calculate Stats
