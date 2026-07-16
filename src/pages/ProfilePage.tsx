@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, AlertTriangle, Save, Trash2, Calendar, FileText, Clock } from 'lucide-react';
+import { User, Lock, AlertTriangle, Save, Trash2, Calendar, FileText, Clock, LogOut } from 'lucide-react';
 import Navbar from '../components/common/Navbar';
 import { useApp } from '../contexts/AppContext';
 import { API_BASE_URL } from '../config';
@@ -179,6 +179,15 @@ export default function ProfilePage() {
                   <Clock size={14} /> Last assessment: <strong>{lastAssessmentDate}</strong>
                 </div>
               </div>
+            </div>
+            <div style={{ marginLeft: 'auto', alignSelf: 'flex-start' }}>
+              <button 
+                className="btn btn-secondary btn-icon" 
+                onClick={logout}
+                style={{ padding: '8px 16px', fontSize: '0.875rem' }}
+              >
+                <LogOut size={16} /> Sign Out
+              </button>
             </div>
           </div>
         </div>

@@ -61,6 +61,9 @@ export default function Navbar() {
               <Link to="/history" className={`navbar-link ${isActive('/history') ? 'active' : ''}`}>
                 History
               </Link>
+              <Link to="/profile" className={`navbar-link ${isActive('/profile') ? 'active' : ''}`}>
+                Profile
+              </Link>
             </>
           )}
           {currentUser?.role === 'worker' && (
@@ -141,19 +144,14 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* CTA Button / Logout */}
+          {/* CTA Button */}
           {!currentUser ? (
             <Link to="/login" className="btn btn-primary btn-sm navbar-cta">
               {t('nav.login', 'Login')}
             </Link>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Link to="/profile" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none' }} className="navbar-link">
-                Hi, {currentUser.preferred_name}
-              </Link>
-              <button onClick={logout} className="btn btn-secondary btn-sm navbar-cta">
-                {t('nav.logout', 'Logout')}
-              </button>
+              {/* Account actions moved to Profile page */}
             </div>
           )}
 
@@ -186,14 +184,7 @@ export default function Navbar() {
           {!currentUser ? (
             <Link to="/login" className="mobile-link" style={{ color: 'var(--text-accent)' }} onClick={() => setMobileOpen(false)}>{t('nav.login', 'Login')}</Link>
           ) : (
-            <>
-              <Link to="/profile" className="mobile-link" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
-                Hi, {currentUser.preferred_name}
-              </Link>
-              <button className="mobile-link" style={{ color: 'var(--risk-high)', textAlign: 'left', width: '100%' }} onClick={() => { logout(); setMobileOpen(false); }}>
-                {t('nav.logout', 'Logout')}
-              </button>
-            </>
+            <Link to="/profile" className="mobile-link" onClick={() => setMobileOpen(false)}>Profile</Link>
           )}
 
           {/* Mobile theme toggle */}
