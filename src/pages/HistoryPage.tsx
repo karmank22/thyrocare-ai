@@ -283,13 +283,27 @@ export default function HistoryPage() {
               <div key={i} className="skeleton glass-card" style={{ height: '120px' }}></div>
             ))}
           </div>
-        ) : filteredAssessments.length === 0 ? (
+        ) : assessments.length === 0 ? (
           <div className="glass-card" style={{ padding: 'var(--space-2xl)', textAlign: 'center' }}>
             <div style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-md)' }}>
               <FileText size={64} style={{ opacity: 0.5 }} />
             </div>
-            <h2>No assessments match your search</h2>
-            <p style={{ color: 'var(--text-muted)' }}>Try changing your search term or clearing the applied filters.</p>
+            <h2>No Assessments Yet</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-lg)' }}>
+              You haven't completed any thyroid assessments yet.<br/>
+              Upload your first thyroid report to begin tracking your thyroid health over time.
+            </p>
+            <button className="btn btn-primary" onClick={() => navigate('/screening')}>
+              Upload First Report
+            </button>
+          </div>
+        ) : filteredAssessments.length === 0 ? (
+          <div className="glass-card" style={{ padding: 'var(--space-2xl)', textAlign: 'center' }}>
+            <div style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-md)' }}>
+              <Search size={64} style={{ opacity: 0.5 }} />
+            </div>
+            <h2>No Assessments Match Your Search</h2>
+            <p style={{ color: 'var(--text-muted)' }}>Try adjusting your search terms or clearing the applied filters.</p>
             {(searchQuery || dateFilter !== 'All Assessments') && (
               <button className="btn btn-secondary" style={{ marginTop: 'var(--space-md)' }} onClick={handleClearFilters}>
                 Clear All Filters
