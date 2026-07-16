@@ -141,7 +141,12 @@ export default function ProfilePage() {
     }
   };
 
-  const initial = currentUser?.preferred_name ? currentUser.preferred_name.charAt(0).toUpperCase() : 'U';
+  let avatarContent = <User size={40} />;
+  if (currentUser?.preferred_name && currentUser.preferred_name.trim().length > 0) {
+    avatarContent = <>{currentUser.preferred_name.trim().charAt(0).toUpperCase()}</>;
+  } else if (currentUser?.username && currentUser.username.trim().length > 0) {
+    avatarContent = <>{currentUser.username.trim().charAt(0).toUpperCase()}</>;
+  }
 
   // Calculate Stats
   const reportsUploaded = assessments.length;
@@ -162,7 +167,7 @@ export default function ProfilePage() {
         <div className="glass-card profile-header-card animate-fadeInUp">
           <div className="profile-header-top">
             <div className="profile-avatar">
-              {initial}
+              {avatarContent}
             </div>
             <div>
               <h1 className="profile-title">{currentUser?.preferred_name}</h1>
