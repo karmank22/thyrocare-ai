@@ -38,7 +38,7 @@ export default function ReportUpload({ onUploadComplete }: Props) {
       const formData = new FormData();
       formData.append('file', f);
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('thyrocare_token');
       if (!token) throw new Error("Authentication required");
 
       // Stage 2: Reading Report
