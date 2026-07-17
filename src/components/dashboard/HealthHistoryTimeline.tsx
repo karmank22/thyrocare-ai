@@ -79,22 +79,22 @@ export default function HealthHistoryTimeline({ history, hasMore = false }: Prop
                     {i < history.length - 1 && <div className="timeline-connector" />}
                   </div>
                   <div className="timeline-content">
-                    <div className={`timeline-card ${isLatest ? 'timeline-card-latest' : ''}`} onClick={() => navigate('/history')} style={{ cursor: 'pointer' }}>
-                      <div className="timeline-card-header">
+                    <div className={`timeline-card ${isLatest ? 'timeline-card-latest' : ''}`} onClick={() => navigate('/history')}>
+                      <div className="timeline-card-meta">
                         <div className="timeline-date">
                           {date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </div>
                         {isLatest && <span className="latest-badge">Latest</span>}
                       </div>
-                      <div className="timeline-card-body">
-                        <div className="timeline-metrics">
-                          <span className={`risk-badge risk-badge-${entry.risk_class.toLowerCase()}`} style={{ fontSize: '0.6875rem' }}>
+                      <div className="timeline-card-main">
+                        <div className="timeline-metrics-stack">
+                          <span className={`risk-badge risk-badge-${entry.risk_class.toLowerCase()}`} style={{ alignSelf: 'flex-start', fontSize: '0.65rem' }}>
                             {entry.risk_class}
                           </span>
-                          <span className="timeline-tsh" style={{ color }}>
-                            TSH {entry.tsh} mIU/L
+                          <div className="timeline-tsh">
+                            {entry.tsh} <span className="tsh-unit">mIU/L</span>
                             {trend}
-                          </span>
+                          </div>
                         </div>
                         <div className="timeline-action">
                           <span>View Report</span>
