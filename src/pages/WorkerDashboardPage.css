@@ -1,0 +1,80 @@
+.worker-dashboard {
+  background-color: var(--bg-main);
+  min-height: 100vh;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-card h3 {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.beneficiary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.beneficiary-table th, .beneficiary-table td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.beneficiary-table th {
+  background-color: var(--bg-main);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.risk-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.risk-normal { background: rgba(52, 211, 153, 0.1); color: var(--risk-normal); border: 1px solid var(--risk-normal); }
+.risk-mild { background: rgba(251, 191, 36, 0.1); color: var(--risk-mild); border: 1px solid var(--risk-mild); }
+.risk-moderate { background: rgba(249, 115, 22, 0.1); color: var(--risk-moderate); border: 1px solid var(--risk-moderate); }
+.risk-high { background: rgba(239, 68, 68, 0.1); color: var(--risk-high); border: 1px solid var(--risk-high); }
+.risk-critical { background: rgba(220, 38, 38, 0.2); color: var(--risk-high); border: 1px solid var(--risk-high); }
+
+.ref-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.ref-none {
+  background: var(--bg-main);
+  color: var(--text-secondary);
+  border: 1px dashed var(--border-color);
+}
+.ref-done {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid #3b82f6;
+}

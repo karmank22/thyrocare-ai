@@ -25,6 +25,14 @@ class Assessment(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
+    # ASHA Beneficiary Tracking
+    is_asha_assessment = Column(Boolean, default=False)
+    patient_name = Column(String, nullable=True)
+    patient_mobile = Column(String, nullable=True)
+    patient_village = Column(String, nullable=True)
+    referral_status = Column(String, default="Not Referred")
+    follow_up_notes = Column(String, nullable=True)
+
     # 1. Raw Input Data
     age = Column(Float, nullable=True)
     bmi = Column(Float, nullable=True)

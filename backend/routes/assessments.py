@@ -92,3 +92,27 @@ async def upload_and_parse_report(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to process report: {str(e)}")
+
+@router.put("/{assessment_id}/referral", response_model=schemas.AssessmentResponse)
+def update_referral_status(
+    assessment_id: str,
+    update_data: schemas.ReferralUpdateRequest,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(database.get_db)
+):
+    """Updates the referral status and notes for an ASHA beneficiary assessment."""
+    assessment = db.query(models.Assessment).filter(
+        models.Assessment.id == assessment_id, 
+        models.Assessment.user_id == current_user.id
+    ).first()
+    
+    if not assessment:
+        raise HTTPException(status_code=404, detail="Assessment not found.")
+        
+    assessment.referral_status = update_data.referral_status
+    if update_data.follow_up_notes is not None:
+        assessment.follow_up_notes = update_data.follow_up_notes
+        
+    db.commit()
+    db.refresh(assessment)
+    return assessment

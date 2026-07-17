@@ -20,6 +20,8 @@ import AssessmentDetailsPage from './pages/AssessmentDetailsPage';
 import HealthWorkerPage from './pages/HealthWorkerPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
+import WorkerDashboardPage from './pages/WorkerDashboardPage';
+import BeneficiaryDetailPage from './pages/BeneficiaryDetailPage';
 
 // Context
 import { AppContext } from './contexts/AppContext';
@@ -173,6 +175,22 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['worker']}>
                 <HealthWorkerPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/worker-dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={['worker']}>
+                <WorkerDashboardPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/beneficiary/:id" 
+            element={
+              <ProtectedRoute allowedRoles={['worker']}>
+                <BeneficiaryDetailPage />
               </ProtectedRoute>
             } 
           />

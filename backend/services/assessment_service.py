@@ -30,6 +30,13 @@ class AssessmentService:
             # 3. Create DB Model
             db_assessment = Assessment(
                 user_id=user.id,
+                # ASHA Beneficiary Tracking
+                is_asha_assessment=raw_data.get("is_asha_assessment", False),
+                patient_name=raw_data.get("patient_name"),
+                patient_mobile=raw_data.get("patient_mobile"),
+                patient_village=raw_data.get("patient_village"),
+                referral_status=raw_data.get("referral_status", "Not Referred"),
+                follow_up_notes=raw_data.get("follow_up_notes"),
                 # Raw inputs
                 age=raw_data.get("age"),
                 bmi=raw_data.get("bmi"),

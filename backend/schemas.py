@@ -60,6 +60,14 @@ class PasswordUpdate(BaseModel):
 
 
 class AssessmentCreateRequest(BaseModel):
+    # ASHA Beneficiary Tracking
+    is_asha_assessment: bool = False
+    patient_name: str | None = None
+    patient_mobile: str | None = None
+    patient_village: str | None = None
+    referral_status: str = "Not Referred"
+    follow_up_notes: str | None = None
+
     # Strictly input data
     age: float | None = Field(None, ge=10, le=120)
     bmi: float | None = Field(None, ge=10, le=60)
@@ -99,3 +107,7 @@ class AssessmentResponse(AssessmentCreateRequest):
 
     class Config:
         from_attributes = True
+
+class ReferralUpdateRequest(BaseModel):
+    referral_status: str
+    follow_up_notes: str | None = None
