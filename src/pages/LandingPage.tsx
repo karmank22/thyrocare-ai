@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Navbar from '../components/common/Navbar';
+import { useApp } from '../contexts/AppContext';
 import './LandingPage.css';
 
 const StatCard = ({ value, label }: { value: string; label: string }) => (
@@ -21,6 +22,7 @@ const FeatureCard = ({ icon, title, desc, delay }: { icon: string; title: string
 
 export default function LandingPage() {
   const { t } = useTranslation();
+  const { currentUser } = useApp();
 
   const features = [
     { icon: '📋', key: '1' },
@@ -58,18 +60,18 @@ export default function LandingPage() {
           </p>
 
           <div className="hero-cta animate-fadeInUp" style={{ animationDelay: '200ms' }}>
-            <Link to="/screening" className="btn btn-primary btn-lg" id="hero-start-screening">
+            <Link to={currentUser?.role === 'worker' ? '/worker' : '/screening'} className="btn btn-primary btn-lg" id="hero-start-screening">
               {t('landing.start_screening')}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
               </svg>
             </Link>
-            <Link to="/dashboard" className="btn btn-secondary btn-lg" id="hero-view-demo">
+            <Link to={currentUser?.role === 'worker' ? '/worker/history' : '/dashboard'} className="btn btn-secondary btn-lg" id="hero-view-demo">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
                 <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
                 <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
               </svg>
-              View Demo Dashboard
+              {currentUser?.role === 'worker' ? 'View Assessment History' : 'View Demo Dashboard'}
             </Link>
           </div>
 
@@ -243,7 +245,7 @@ export default function LandingPage() {
             <div className="cta-orb" />
             <h2 className="cta-title">{t('landing.cta_title')}</h2>
             <p className="cta-subtitle">{t('landing.cta_subtitle')}</p>
-            <Link to="/screening" className="btn btn-primary btn-lg" id="cta-start-screening">
+            <Link to={currentUser?.role === 'worker' ? '/worker' : '/screening'} className="btn btn-primary btn-lg" id="cta-start-screening">
               {t('landing.start_screening')}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
                 <path d="M5 12h14M12 5l7 7-7 7"/>
