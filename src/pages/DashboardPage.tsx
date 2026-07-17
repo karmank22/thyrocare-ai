@@ -41,6 +41,7 @@ export default function DashboardPage() {
   const [goals, setGoals] = useState(mockWellnessGoals);
   const [trendData, setTrendData] = useState<any[]>([]);
   const [history, setHistory] = useState<any[]>([]);
+  const [hasMoreHistory, setHasMoreHistory] = useState(false);
   
   const [loading, setLoading] = useState(!ctxAssessment);
   const [hasRecord, setHasRecord] = useState(!!ctxAssessment);
@@ -104,7 +105,7 @@ export default function DashboardPage() {
               }));
               setTrendData(mappedTrend);
 
-              const timelineHistory = [...sortedHistory].reverse().slice(0, 10).map((item: any) => ({
+              const timelineHistory = [...sortedHistory].reverse().slice(0, 5).map((item: any) => ({
                 date: item.created_at,
                 tsh: item.tsh || 0,
                 t3: item.t3 || 0,
@@ -112,6 +113,7 @@ export default function DashboardPage() {
                 risk_class: item.risk_class || 'Normal',
               }));
               setHistory(timelineHistory);
+              setHasMoreHistory(sortedHistory.length > 5);
             }
           }
         } else {
@@ -280,7 +282,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div className="dashboard-col-narrow">
-                  <HealthHistoryTimeline history={history} />
+                  <HealthHistoryTimeline history={history} hasMore={hasMoreHistory} />
                 </div>
               </div>
 

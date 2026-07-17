@@ -1,10 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { FileText } from 'lucide-react';
+import { FileText, ArrowRight } from 'lucide-react';
 import type { HistoryEntry, RiskClass } from '../../types';
 
-interface Props { history: HistoryEntry[]; }
+interface Props { 
+  history: HistoryEntry[];
+  hasMore?: boolean;
+}
 
 const RISK_COLORS: Record<RiskClass, string> = {
   Normal: '#00c896', Mild: '#f59e0b', Moderate: '#f97316', High: '#ef4444',
@@ -14,7 +17,7 @@ const RISK_SCORES: Record<RiskClass, number> = {
   Normal: 0, Mild: 1, Moderate: 2, High: 3,
 };
 
-export default function HealthHistoryTimeline({ history }: Props) {
+export default function HealthHistoryTimeline({ history, hasMore = false }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -40,52 +43,76 @@ export default function HealthHistoryTimeline({ history }: Props) {
           </button>
         </div>
       ) : (
-        <div className="timeline">
-          {history.map((entry, i) => {
-            const date = new Date(entry.date);
-            const color = RISK_COLORS[entry.risk_class];
-            
-            let trend = null;
-            if (i < history.length - 1) {
-              const previous = history[i + 1];
-              const currentScore = RISK_SCORES[entry.risk_class];
-              const previousScore = RISK_SCORES[previous.risk_class];
+        <div className="timeline-container">
+          <div className="timeline">
+            {history.map((entry, i) => {
+              const date = new Date(entry.date);
+              const color = RISK_COLORS[entry.risk_class];
+              const isLatest = i === 0;
               
-              if (currentScore < previousScore) trend = <span title="Improved" style={{ color: '#00c896', marginLeft: '6px' }}>⬇️</span>;
-              else if (currentScore > previousScore) trend = <span title="Worsened" style={{ color: '#ef4444', marginLeft: '6px' }}>⬆️</span>;
-              else {
-                const currentDiff = Math.abs(entry.tsh - 2.5);
-                const prevDiff = Math.abs((previous.tsh || 0) - 2.5);
-                if (currentDiff < prevDiff - 0.5) trend = <span title="Slightly Improved" style={{ color: '#00c896', marginLeft: '6px' }}>↘️</span>;
-                else if (currentDiff > prevDiff + 0.5) trend = <span title="Slightly Worsened" style={{ color: '#ef4444', marginLeft: '6px' }}>↗️</span>;
-                else trend = <span title="Stable" style={{ color: 'var(--text-muted)', marginLeft: '6px' }}>➡️</span>;
+              let trend = null;
+              if (i < history.length - 1) {
+                const previous = history[i + 1];
+                const currentScore = RISK_SCORES[entry.risk_class];
+                const previousScore = RISK_SCORES[previous.risk_class];
+                
+                if (currentScore < previousScore) trend = <span title="Improved" style={{ color: '#00c896', marginLeft: '6px' }}>⬇️</span>;
+                else if (currentScore > previousScore) trend = <span title="Worsened" style={{ color: '#ef4444', marginLeft: '6px' }}>⬆️</span>;
+                else {
+                  const currentDiff = Math.abs(entry.tsh - 2.5);
+                  const prevDiff = Math.abs((previous.tsh || 0) - 2.5);
+                  if (currentDiff < prevDiff - 0.5) trend = <span title="Slightly Improved" style={{ color: '#00c896', marginLeft: '6px' }}>↘️</span>;
+                  else if (currentDiff > prevDiff + 0.5) trend = <span title="Slightly Worsened" style={{ color: '#ef4444', marginLeft: '6px' }}>↗️</span>;
+                  else trend = <span title="Stable" style={{ color: 'var(--text-muted)', marginLeft: '6px' }}>➡️</span>;
+                }
               }
-            }
 
-            return (
-              <div key={i} className="timeline-item">
-                <div className="timeline-line-wrap">
-                  <div className="timeline-dot" style={{ background: color, boxShadow: `0 0 8px ${color}` }} />
-                  {i < history.length - 1 && <div className="timeline-connector" />}
-                </div>
-                <div className="timeline-content">
-                  <div className="timeline-date">
-                    {date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' })}
+              return (
+                <div key={i} className="timeline-item">
+                  <div className="timeline-line-wrap">
+                    <div className={`timeline-dot ${isLatest ? 'active' : ''}`} style={{ 
+                      background: color, 
+                      boxShadow: isLatest ? `0 0 12px ${color}, 0 0 0 4px rgba(255,255,255,0.1)` : 'none',
+                      border: isLatest ? 'none' : `2px solid ${color}`,
+                      backgroundColor: isLatest ? color : 'var(--color-bg-primary)'
+                    }} />
+                    {i < history.length - 1 && <div className="timeline-connector" />}
                   </div>
-                  <div className="timeline-header">
-                    <span className={`risk-badge risk-badge-${entry.risk_class.toLowerCase()}`} style={{ fontSize: '0.6875rem' }}>
-                      {entry.risk_class}
-                    </span>
-                    <span className="timeline-tsh" style={{ color, display: 'flex', alignItems: 'center' }}>
-                      TSH {entry.tsh}
-                      {trend}
-                    </span>
+                  <div className="timeline-content">
+                    <div className={`timeline-card ${isLatest ? 'timeline-card-latest' : ''}`} onClick={() => navigate('/history')} style={{ cursor: 'pointer' }}>
+                      <div className="timeline-card-header">
+                        <div className="timeline-date">
+                          {date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </div>
+                        {isLatest && <span className="latest-badge">Latest</span>}
+                      </div>
+                      <div className="timeline-card-body">
+                        <div className="timeline-metrics">
+                          <span className={`risk-badge risk-badge-${entry.risk_class.toLowerCase()}`} style={{ fontSize: '0.6875rem' }}>
+                            {entry.risk_class}
+                          </span>
+                          <span className="timeline-tsh" style={{ color }}>
+                            TSH {entry.tsh} mIU/L
+                            {trend}
+                          </span>
+                        </div>
+                        <div className="timeline-action">
+                          <span>View Report</span>
+                          <ArrowRight size={14} />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="timeline-note">{entry.notes}</div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+          {hasMore && (
+            <div className="timeline-footer" onClick={() => navigate('/history')}>
+              <span>View Full History</span>
+              <ArrowRight size={16} />
+            </div>
+          )}
         </div>
       )}
     </div>
