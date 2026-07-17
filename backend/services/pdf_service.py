@@ -25,22 +25,22 @@ class PdfService:
                 extracted['tsh'] = float(tsh_match.group(1))
                 
             # Free T3
-            ft3_match = re.search(r"(?i)\b(?:FT3|Free\s*T3)\b[^\d\n]{0,40}?(\d+\.\d+|\d+)", text)
+            ft3_match = re.search(r"(?i)\b(?:FT-?3|Free\s*T-?3)\b[^\d\n]{0,40}?(\d+\.\d+|\d+)", text)
             if ft3_match:
                 extracted['t3'] = float(ft3_match.group(1))
             else:
                 # Total T3 fallback
-                t3_match = re.search(r"(?i)\b(?:T3|Total\s*T3|Triiodothyronine)\b[^\d\n]{0,40}?(\d+\.\d+|\d+)", text)
+                t3_match = re.search(r"(?i)\b(?:T-?3|Total\s*T-?3|Triiodothyronine)\b[^\d\n]{0,40}?(\d+\.\d+|\d+)", text)
                 if t3_match:
                     extracted['t3'] = float(t3_match.group(1))
 
             # Free T4
-            ft4_match = re.search(r"(?i)\b(?:FT4|Free\s*T4)\b[^\d\n]{0,40}?(\d+\.\d+|\d+)", text)
+            ft4_match = re.search(r"(?i)\b(?:FT-?4|Free\s*T-?4)\b[^\d\n]{0,40}?(\d+\.\d+|\d+)", text)
             if ft4_match:
                 extracted['t4'] = float(ft4_match.group(1))
             else:
                 # Total T4 fallback
-                t4_match = re.search(r"(?i)\b(?:T4|Total\s*T4|Thyroxine)\b[^\d\n]{0,40}?(\d+\.\d+|\d+)", text)
+                t4_match = re.search(r"(?i)\b(?:T-?4|Total\s*T-?4|Thyroxine)\b[^\d\n]{0,40}?(\d+\.\d+|\d+)", text)
                 if t4_match:
                     extracted['t4'] = float(t4_match.group(1))
                     
