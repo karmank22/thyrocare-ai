@@ -67,9 +67,14 @@ export default function Navbar() {
             </>
           )}
           {currentUser?.role === 'worker' && (
-            <Link to="/worker" className={`navbar-link ${isActive('/worker') ? 'active' : ''}`}>
-              {t('nav.worker', 'Worker Portal')}
-            </Link>
+            <>
+              <Link to="/worker" className={`navbar-link ${isActive('/worker') ? 'active' : ''}`}>
+                New Screening
+              </Link>
+              <Link to="/worker/history" className={`navbar-link ${isActive('/worker/history') ? 'active' : ''}`}>
+                Assessment History
+              </Link>
+            </>
           )}
         </div>
 

@@ -20,7 +20,7 @@ import AssessmentDetailsPage from './pages/AssessmentDetailsPage';
 import HealthWorkerPage from './pages/HealthWorkerPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
-import WorkerDashboardPage from './pages/WorkerDashboardPage';
+import WorkerHistoryPage from './pages/WorkerHistoryPage';
 import BeneficiaryDetailPage from './pages/BeneficiaryDetailPage';
 
 // Context
@@ -179,10 +179,10 @@ export default function App() {
             } 
           />
           <Route 
-            path="/worker-dashboard" 
+            path="/worker/history" 
             element={
               <ProtectedRoute allowedRoles={['worker']}>
-                <WorkerDashboardPage />
+                <WorkerHistoryPage />
               </ProtectedRoute>
             } 
           />

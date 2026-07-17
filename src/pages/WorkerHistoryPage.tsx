@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/common/Navbar';
 import { API_BASE_URL } from '../config';
 import { getOfflineAssessments, deleteOfflineAssessment, saveOfflineAssessment } from '../services/offlineSync';
-import './WorkerDashboardPage.css';
+import './WorkerHistoryPage.css';
 
-export default function WorkerDashboardPage() {
+export default function WorkerHistoryPage() {
   const navigate = useNavigate();
   const [assessments, setAssessments] = useState<any[]>([]);
   const [offlineCount, setOfflineCount] = useState(0);
@@ -13,6 +13,7 @@ export default function WorkerDashboardPage() {
   const [syncing, setSyncing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRisk, setFilterRisk] = useState('All');
+  const [filterDate, setFilterDate] = useState('All');
 
   const fetchAssessments = async () => {
     const token = localStorage.getItem('thyrocare_token');
@@ -21,7 +22,9 @@ export default function WorkerDashboardPage() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        const data = await res.json();
+        let data = await res.json();
+        // Sort newest first
+        data = data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         setAssessments(data);
       }
     } catch (e) {
@@ -77,68 +80,99 @@ export default function WorkerDashboardPage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this screening? This action cannot be undone.")) return;
+    
+    const token = localStorage.getItem('thyrocare_token');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/assessments/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setAssessments(assessments.filter(a => a.id !== id));
+      } else {
+        alert("Failed to delete assessment.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("An error occurred while deleting.");
+    }
+  };
+
   const filteredAssessments = assessments.filter(a => {
     const matchesSearch = 
       (a.patient_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (a.patient_village || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (a.patient_mobile || '').includes(searchTerm);
       
-    const matchesRisk = filterRisk === 'All' || a.risk_class === filterRisk;
-    return matchesSearch && matchesRisk;
-  });
+    let matchesRisk = true;
+    if (filterRisk !== 'All') {
+      if (filterRisk === 'Pending Referral') matchesRisk = a.referral_status === 'Not Referred' && (a.risk_class === 'High' || a.risk_class === 'Critical' || a.risk_class === 'Moderate');
+      else if (filterRisk === 'Referred') matchesRisk = a.referral_status !== 'Not Referred';
+      else matchesRisk = a.risk_class === filterRisk;
+    }
 
-  const highRiskCount = assessments.filter(a => a.risk_class === 'High' || a.risk_class === 'Critical').length;
-  const pendingReferrals = assessments.filter(a => (a.risk_class === 'High' || a.risk_class === 'Critical') && a.referral_status === 'Not Referred').length;
+    let matchesDate = true;
+    if (filterDate !== 'All') {
+      const assessmentDate = new Date(a.created_at);
+      const now = new Date();
+      const diffDays = (now.getTime() - assessmentDate.getTime()) / (1000 * 3600 * 24);
+      if (filterDate === 'Today') matchesDate = diffDays < 1;
+      else if (filterDate === 'Last 7 Days') matchesDate = diffDays <= 7;
+      else if (filterDate === 'Last 30 Days') matchesDate = diffDays <= 30;
+    }
+
+    return matchesSearch && matchesRisk && matchesDate;
+  });
 
   return (
     <div className="worker-dashboard">
       <Navbar />
       <div className="container" style={{ marginTop: 'var(--space-xl)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-lg)' }}>
-          <h1>👥 Beneficiary Dashboard</h1>
+          <h1>👥 Assessment History</h1>
           <button className="btn btn-primary" onClick={() => navigate('/worker')}>+ New Screening</button>
         </div>
 
-        <div className="stats-grid">
-          <div className="stat-card">
-            <h3>Total Screened</h3>
-            <div className="stat-value">{assessments.length}</div>
-          </div>
-          <div className="stat-card" style={{ borderColor: 'var(--risk-high)' }}>
-            <h3>High Risk</h3>
-            <div className="stat-value" style={{ color: 'var(--risk-high)' }}>{highRiskCount}</div>
-          </div>
-          <div className="stat-card" style={{ borderColor: 'var(--risk-moderate)' }}>
-            <h3>Pending Referrals</h3>
-            <div className="stat-value" style={{ color: 'var(--risk-moderate)' }}>{pendingReferrals}</div>
-          </div>
-          <div className="stat-card" style={{ borderColor: offlineCount > 0 ? 'var(--risk-mild)' : 'var(--border-color)' }}>
-            <h3>Offline Queue</h3>
-            <div className="stat-value">{offlineCount}</div>
-            {offlineCount > 0 && (
-              <button className="btn btn-secondary btn-sm" onClick={handleSync} disabled={syncing} style={{ marginTop: '10px' }}>
+        {offlineCount > 0 && (
+          <div className="glass-card" style={{ marginBottom: 'var(--space-lg)', borderColor: 'var(--risk-mild)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ margin: 0 }}>Offline Queue</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>You have {offlineCount} screenings waiting to be synced to the server.</p>
+              </div>
+              <button className="btn btn-secondary" onClick={handleSync} disabled={syncing}>
                 {syncing ? 'Syncing...' : 'Sync Now'}
               </button>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="glass-card" style={{ marginTop: 'var(--space-lg)' }}>
+        <div className="glass-card">
           <div style={{ display: 'flex', gap: 'var(--space-md)', marginBottom: 'var(--space-md)' }}>
             <input 
               type="text" 
               className="form-input" 
-              placeholder="Search by Name, Village, Mobile..." 
+              placeholder="Search by Beneficiary Name, Mobile..." 
               value={searchTerm} 
               onChange={e => setSearchTerm(e.target.value)} 
               style={{ flex: 1 }}
             />
-            <select className="form-input" value={filterRisk} onChange={e => setFilterRisk(e.target.value)} style={{ width: '200px' }}>
-              <option value="All">All Risks</option>
+            <select className="form-input" value={filterDate} onChange={e => setFilterDate(e.target.value)} style={{ width: '180px' }}>
+              <option value="All">All Time</option>
+              <option value="Today">Today</option>
+              <option value="Last 7 Days">Last 7 Days</option>
+              <option value="Last 30 Days">Last 30 Days</option>
+            </select>
+            <select className="form-input" value={filterRisk} onChange={e => setFilterRisk(e.target.value)} style={{ width: '180px' }}>
+              <option value="All">All Statuses</option>
               <option value="High">High Risk</option>
               <option value="Moderate">Moderate Risk</option>
-              <option value="Mild">Mild Risk</option>
+              <option value="Mild">Low Risk (Mild)</option>
               <option value="Normal">Normal</option>
+              <option value="Pending Referral">Pending Referral</option>
+              <option value="Referred">Referred</option>
             </select>
           </div>
 
@@ -146,8 +180,8 @@ export default function WorkerDashboardPage() {
             <div style={{ textAlign: 'center', padding: 'var(--space-xl)' }}><div className="spinner" /></div>
           ) : filteredAssessments.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 'var(--space-xl)', color: 'var(--text-secondary)' }}>
-              <h3>No Beneficiaries Found</h3>
-              <p>Complete your first screening to begin tracking community health assessments.</p>
+              <h3>No Assessments Yet</h3>
+              <p>You haven't completed any beneficiary screenings matching these filters.</p>
               <button className="btn btn-primary" onClick={() => navigate('/worker')} style={{ marginTop: 'var(--space-md)' }}>Start New Screening</button>
             </div>
           ) : (
@@ -155,28 +189,31 @@ export default function WorkerDashboardPage() {
               <table className="beneficiary-table">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>Village</th>
-                    <th>Risk Score</th>
-                    <th>Referral Status</th>
-                    <th>Action</th>
+                    <th>Beneficiary</th>
+                    <th>Date & Time</th>
+                    <th>Age</th>
+                    <th>TSH</th>
+                    <th>Risk Class</th>
+                    <th>Referral</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredAssessments.map(a => (
                     <tr key={a.id}>
                       <td style={{ fontWeight: 600 }}>{a.patient_name || 'Anonymous'}</td>
-                      <td>{new Date(a.created_at).toLocaleDateString()}</td>
-                      <td>{a.patient_village || 'N/A'}</td>
+                      <td>{new Date(a.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</td>
+                      <td>{a.age}</td>
+                      <td>{a.tsh ? `${a.tsh} mIU/L` : '-'}</td>
                       <td>
                         <span className={`risk-badge risk-${a.risk_class?.toLowerCase()}`}>{a.risk_class}</span>
                       </td>
                       <td>
                         <span className={`ref-badge ${a.referral_status === 'Not Referred' ? 'ref-none' : 'ref-done'}`}>{a.referral_status || 'Not Referred'}</span>
                       </td>
-                      <td>
-                        <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/beneficiary/${a.id}`)}>View Details</button>
+                      <td style={{ display: 'flex', gap: '8px' }}>
+                        <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/beneficiary/${a.id}`)}>Details</button>
+                        <button className="btn btn-secondary btn-sm" onClick={() => handleDelete(a.id)} style={{ color: 'var(--risk-high)', borderColor: 'var(--risk-high)' }}>Delete</button>
                       </td>
                     </tr>
                   ))}

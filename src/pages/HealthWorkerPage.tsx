@@ -250,10 +250,15 @@ export default function HealthWorkerPage() {
         <div className="worker-submit-bar">
           {submitted ? (
             <div className="worker-submitted">
-              <div>✅ Assessment saved successfully!</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--risk-normal)' }}>
+                ✅ Assessment saved successfully!
+              </div>
+              <p style={{ color: 'var(--text-secondary)', marginTop: 'var(--space-xs)' }}>
+                It has been added to your Assessment History.
+              </p>
               <div style={{display: 'flex', gap: '10px', marginTop: '15px', justifyContent: 'center'}}>
-                 <button className="btn btn-secondary" onClick={() => { setSubmitted(false); setForm(defaultWorkerForm); setPatientName(''); setPatientMobile(''); setVillage(''); }}>Start Another Screening</button>
-                 <button className="btn btn-primary" onClick={() => navigate('/worker-dashboard')}>View Beneficiary List</button>
+                 <button className="btn btn-primary" onClick={() => { setSubmitted(false); setForm(defaultWorkerForm); setPatientName(''); setPatientMobile(''); setVillage(''); }}>Start New Screening</button>
+                 <button className="btn btn-secondary" onClick={() => navigate('/worker/history')}>View Assessment History</button>
               </div>
             </div>
           ) : (

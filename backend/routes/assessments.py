@@ -116,3 +116,22 @@ def update_referral_status(
     db.commit()
     db.refresh(assessment)
     return assessment
+
+@router.delete("/{assessment_id}")
+def delete_assessment(
+    assessment_id: str,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(database.get_db)
+):
+    """Deletes an assessment if it belongs to the current user."""
+    assessment = db.query(models.Assessment).filter(
+        models.Assessment.id == assessment_id, 
+        models.Assessment.user_id == current_user.id
+    ).first()
+    
+    if not assessment:
+        raise HTTPException(status_code=404, detail="Assessment not found.")
+        
+    db.delete(assessment)
+    db.commit()
+    return {"message": "Assessment deleted successfully"}
