@@ -1,6 +1,7 @@
 .worker-dashboard {
   background-color: var(--bg-main);
   min-height: 100vh;
+  padding-top: var(--navbar-height);
 }
 
 .stats-grid {

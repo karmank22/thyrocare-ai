@@ -78,8 +78,18 @@ export default function HealthWorkerPage() {
     setSubmitting(true);
     const token = localStorage.getItem('thyrocare_token');
     
+    const parsedForm = { ...form };
+    ['tsh', 't3', 'tt4', 't4u', 'fti', 'bmi'].forEach(key => {
+      if (parsedForm[key] === '') {
+        parsedForm[key] = null;
+      } else {
+        parsedForm[key] = parseFloat(parsedForm[key]);
+      }
+    });
+    parsedForm.age = parseInt(parsedForm.age, 10) || 0;
+    
     const payload = {
-      ...form,
+      ...parsedForm,
       is_asha_assessment: true,
       patient_name: patientName,
       patient_mobile: patientMobile,
