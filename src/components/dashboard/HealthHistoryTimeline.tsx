@@ -22,7 +22,7 @@ export default function HealthHistoryTimeline({ history, hasMore = false }: Prop
   const navigate = useNavigate();
 
   return (
-    <div className="glass-card panel-card animate-fadeInUp" id="panel-history-timeline" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div className="glass-card panel-card animate-fadeInUp" id="panel-history-timeline" style={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'var(--color-bg-card)' }}>
       <div className="panel-title">
         <div className="panel-title-icon">📅</div>
         {t('dashboard.history')}
@@ -50,57 +50,53 @@ export default function HealthHistoryTimeline({ history, hasMore = false }: Prop
               const color = RISK_COLORS[entry.risk_class];
               const isLatest = i === 0;
               
-              let trend = null;
+              let trendText = '→ No Change';
+              let trendColor = 'var(--text-muted)';
+              
               if (i < history.length - 1) {
                 const previous = history[i + 1];
+                const currentTsh = entry.tsh;
+                const prevTsh = previous.tsh || 0;
+                
+                if (currentTsh > prevTsh) trendText = '↗ Increased';
+                else if (currentTsh < prevTsh) trendText = '↘ Decreased';
+                
                 const currentScore = RISK_SCORES[entry.risk_class];
                 const previousScore = RISK_SCORES[previous.risk_class];
                 
-                if (currentScore < previousScore) trend = <span title="Improved" style={{ color: '#00c896', marginLeft: '6px' }}>⬇️</span>;
-                else if (currentScore > previousScore) trend = <span title="Worsened" style={{ color: '#ef4444', marginLeft: '6px' }}>⬆️</span>;
+                if (currentScore < previousScore) trendColor = 'var(--risk-normal)';
+                else if (currentScore > previousScore) trendColor = 'var(--risk-high)';
                 else {
-                  const currentDiff = Math.abs(entry.tsh - 2.5);
-                  const prevDiff = Math.abs((previous.tsh || 0) - 2.5);
-                  if (currentDiff < prevDiff - 0.5) trend = <span title="Slightly Improved" style={{ color: '#00c896', marginLeft: '6px' }}>↘️</span>;
-                  else if (currentDiff > prevDiff + 0.5) trend = <span title="Slightly Worsened" style={{ color: '#ef4444', marginLeft: '6px' }}>↗️</span>;
-                  else trend = <span title="Stable" style={{ color: 'var(--text-muted)', marginLeft: '6px' }}>➡️</span>;
+                  const currentDiff = Math.abs(currentTsh - 2.5);
+                  const prevDiff = Math.abs(prevTsh - 2.5);
+                  if (currentDiff < prevDiff - 0.5) trendColor = 'var(--risk-normal)';
+                  else if (currentDiff > prevDiff + 0.5) trendColor = 'var(--risk-high)';
                 }
               }
 
               return (
-                <div key={i} className="timeline-item">
-                  <div className="timeline-line-wrap">
-                    <div className={`timeline-dot ${isLatest ? 'active' : ''}`} style={{ 
-                      background: color, 
-                      boxShadow: isLatest ? `0 0 12px ${color}, 0 0 0 4px rgba(255,255,255,0.1)` : 'none',
-                      border: isLatest ? 'none' : `2px solid ${color}`,
-                      backgroundColor: isLatest ? color : 'var(--color-bg-primary)'
-                    }} />
-                    {i < history.length - 1 && <div className="timeline-connector" />}
+                <div key={i} className="timeline-item-minimal" onClick={() => navigate('/history')}>
+                  <div className="timeline-line-wrap-minimal">
+                    <div className={`timeline-dot-minimal ${isLatest ? 'latest' : ''}`} />
+                    {i < history.length - 1 && <div className="timeline-dotted-line" />}
                   </div>
-                  <div className="timeline-content">
-                    <div className={`timeline-card ${isLatest ? 'timeline-card-latest' : ''}`} onClick={() => navigate('/history')}>
-                      <div className="timeline-card-meta">
-                        <div className="timeline-date">
-                          {date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </div>
-                        {isLatest && <span className="latest-badge">Latest</span>}
+                  <div className="timeline-content-minimal">
+                    <div className="timeline-row-minimal">
+                      <div className="timeline-date-minimal">
+                        {date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
-                      <div className="timeline-card-main">
-                        <div className="timeline-metrics-stack">
-                          <span className={`risk-badge risk-badge-${entry.risk_class.toLowerCase()}`} style={{ alignSelf: 'flex-start', fontSize: '0.65rem' }}>
-                            {entry.risk_class}
-                          </span>
-                          <div className="timeline-tsh">
-                            {entry.tsh} <span className="tsh-unit">mIU/L</span>
-                            {trend}
-                          </div>
-                        </div>
-                        <div className="timeline-action">
-                          <span>View Report</span>
-                          <ArrowRight size={14} />
-                        </div>
+                      <div className="timeline-divider-minimal" />
+                      <div className="timeline-label-minimal">TSH LEVEL</div>
+                    </div>
+                    <div className="timeline-tsh-row">
+                      <div className="timeline-tsh-value-minimal">
+                        {entry.tsh} <span className="timeline-tsh-unit-minimal">mIU/L</span>
                       </div>
+                      {i < history.length - 1 && (
+                        <div className="timeline-trend-minimal" style={{ color: trendColor }}>
+                          {trendText}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -108,8 +104,8 @@ export default function HealthHistoryTimeline({ history, hasMore = false }: Prop
             })}
           </div>
           {hasMore && (
-            <div className="timeline-footer" onClick={() => navigate('/history')}>
-              <span>View Full History</span>
+            <div className="timeline-footer-minimal" onClick={() => navigate('/history')}>
+              <span>View All History</span>
               <ArrowRight size={16} />
             </div>
           )}
