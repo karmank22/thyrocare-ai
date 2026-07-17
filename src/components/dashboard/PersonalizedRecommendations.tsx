@@ -6,27 +6,25 @@ interface Props {
   recommendations: RecommendationSet;
 }
 
-type Tab = 'diet' | 'lifestyle' | 'followup';
+type Tab = 'high_priority' | 'lifestyle' | 'diet';
 
 export default function PersonalizedRecommendations({ recommendations }: Props) {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<Tab>('diet');
+  const [activeTab, setActiveTab] = useState<Tab>('high_priority');
 
   const tabs: { key: Tab; label: string; icon: string }[] = [
-    { key: 'diet', label: t('dashboard.diet'), icon: '🥗' },
+    { key: 'high_priority', label: 'High Priority', icon: '🚨' },
     { key: 'lifestyle', label: t('dashboard.lifestyle'), icon: '🌿' },
-    { key: 'followup', label: t('dashboard.followup'), icon: '📅' },
+    { key: 'diet', label: t('dashboard.diet'), icon: '🥗' },
   ];
 
   const contentMap: Record<Tab, string[]> = {
-    diet: recommendations.diet || [],
-    lifestyle: recommendations.lifestyle || [],
-    followup: [
+    high_priority: recommendations.high_priority || [
       `📅 Follow up based on physician's advice`,
-      `📊 Referral level: ${recommendations.referral_tier === 'none' ? 'Self-monitor' : recommendations.referral_tier}`,
-      '💊 Take medication at the same time each day (if prescribed)',
-      '📝 Keep a symptom diary to share at your next appointment',
+      `📊 Referral level: ${recommendations.referral_tier === 'none' ? 'Self-monitor' : recommendations.referral_tier}`
     ],
+    lifestyle: recommendations.lifestyle || [],
+    diet: recommendations.diet || [],
   };
 
   return (

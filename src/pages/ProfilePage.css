@@ -27,7 +27,7 @@
   align-items: center;
   justify-content: center;
   font-size: 2.5rem;
-  color: white;
+  color: var(--text-accent);
   font-weight: 700;
   box-shadow: 0 10px 25px -5px rgba(0, 200, 150, 0.4);
 }

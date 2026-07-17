@@ -143,9 +143,9 @@ export default function ProfilePage() {
 
   let avatarContent: React.ReactNode = <User size={40} color="#ffffff" />;
   if (currentUser?.preferred_name && currentUser.preferred_name.trim().length > 0) {
-    avatarContent = currentUser.preferred_name.trim().charAt(0).toUpperCase();
+    avatarContent = <span style={{ color: 'var(--text-accent)' }}>{currentUser.preferred_name.trim().charAt(0).toUpperCase()}</span>;
   } else if (currentUser?.username && currentUser.username.trim().length > 0) {
-    avatarContent = currentUser.username.trim().charAt(0).toUpperCase();
+    avatarContent = <span style={{ color: 'var(--text-accent)' }}>{currentUser.username.trim().charAt(0).toUpperCase()}</span>;
   }
 
   // Calculate Stats

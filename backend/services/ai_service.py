@@ -131,27 +131,80 @@ class AIService:
     @staticmethod
     def generate_recommendations(risk_class: str, emergency_flag: bool, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generates personalized recommendations.
+        Generates personalized, combinatory, and medically safe recommendations.
         """
+        tsh = data.get("tsh")
+        tsh = float(tsh) if tsh is not None else None
+        bmi = data.get("bmi")
+        bmi = float(bmi) if bmi is not None else None
+        
         is_inland = data.get("iodine_zone") == "inland"
         is_veg = data.get("diet_pref") == "vegetarian"
         has_pcos = data.get("pcos_history")
         is_pregnant = data.get("pregnancy_status")
 
-        diet_recs = []
-        if risk_class == "Normal":
-            diet_recs.append("Use iodized salt in all cooking." if is_inland else "Include seafood 2-3 times weekly.")
-            diet_recs.append("Eat selenium-rich foods: Brazil nuts, sunflower seeds.")
-        elif risk_class == "Mild":
-            diet_recs.append("Switch to double-fortified iodized salt." if is_inland else "Increase coastal seafood intake.")
-            diet_recs.append("Add moringa leaves to diet for iodine and antioxidants.")
-        elif risk_class == "Moderate":
-            diet_recs.append("Consult a nutritionist for a thyroid-specific meal plan.")
-            diet_recs.append("Critical: Use only iodized salt." if is_inland else "Maximize iodine from seafood daily.")
-        elif risk_class == "High":
-            diet_recs.append("⚠️ URGENT: Do not self-medicate. Dietary changes alone will not correct high-risk TSH levels.")
-            diet_recs.append("High-selenium foods daily: 2-3 Brazil nuts.")
+        # Sets to avoid duplicates
+        high_priority = set()
+        lifestyle = set()
+        diet = set()
 
+        def add_rec(category, text):
+            category.add(text)
+
+        # 1. TSH + BMI Combinatorial Logic
+        if tsh is not None and bmi is not None:
+            if tsh > 4.5 and bmi > 25:
+                add_rec(diet, "Weight management is recommended because an elevated TSH often slows metabolism and increases BMI.")
+                add_rec(lifestyle, "Engage in regular, low-impact physical activity to help counter metabolic slowdown.")
+            elif tsh > 4.5 and bmi <= 25:
+                add_rec(diet, "Maintain a balanced nutrient intake to support thyroid function despite an elevated TSH.")
+            elif tsh < 0.5 and bmi < 18.5:
+                add_rec(diet, "Focus on calorie-dense, nutritious foods, as low TSH can accelerate metabolism and lead to being underweight.")
+                add_rec(lifestyle, "Avoid high-intensity cardio to prevent further unwanted weight loss.")
+            elif 0.5 <= tsh <= 4.5 and 18.5 <= bmi <= 25:
+                add_rec(diet, "Maintain a balanced diet to support overall healthy thyroid function.")
+                add_rec(lifestyle, "Continue regular physical activity to maintain your healthy BMI.")
+            elif bmi > 25:
+                add_rec(diet, "Weight management is recommended because your BMI is above the healthy range.")
+                add_rec(lifestyle, "Engage in regular physical activity to support weight management.")
+
+        # 2. Risk Classification Logic (High Priority)
+        if emergency_flag:
+            add_rec(high_priority, "Seek immediate medical consultation. Your clinical values indicate a potential emergency.")
+        elif risk_class == "High":
+            add_rec(high_priority, "Consult an endocrinologist soon. Your thyroid levels are significantly out of range.")
+            add_rec(high_priority, "Repeat thyroid testing within 7 days or as advised by your physician.")
+        elif risk_class == "Moderate":
+            add_rec(high_priority, "Schedule a follow-up with your primary care physician to discuss your results.")
+            add_rec(high_priority, "Repeat thyroid testing within 30 days to monitor your condition.")
+        elif risk_class == "Mild":
+            add_rec(high_priority, "Monitor your symptoms and consider a follow-up test in 60 days.")
+        else:
+            add_rec(high_priority, "Routine thyroid screening annually or as advised by your healthcare provider.")
+
+        # 3. Dietary Specifics (Iodine, Diet Pref)
+        if is_inland:
+            if risk_class in ["Moderate", "High"]:
+                add_rec(diet, "Critical: Use strictly iodized salt for cooking, as your region naturally lacks dietary iodine.")
+            else:
+                add_rec(diet, "Use iodized salt in all cooking to ensure adequate iodine intake in an inland region.")
+        else:
+            add_rec(diet, "Include coastal seafood 2-3 times weekly for natural iodine support.")
+
+        if is_veg:
+            add_rec(diet, "Include paneer, tofu, and lentils to ensure adequate protein for hormone synthesis.")
+        
+        if has_pcos:
+            add_rec(diet, "Focus on a low-glycemic index (GI) diet to manage insulin resistance commonly associated with PCOS.")
+
+        if is_pregnant:
+            add_rec(high_priority, "Discuss these results immediately with your OB-GYN, as thyroid health is critical during pregnancy.")
+
+        # 4. General Lifestyle
+        add_rec(lifestyle, "Maintain healthy sleep habits (7-9 hours) to support hormonal balance.")
+        add_rec(lifestyle, "Manage stress through mindfulness or yoga, as stress hormones can impact thyroid function.")
+
+        # Determine Referral Tier
         referral_tier = "none"
         referral_trigger = None
         if emergency_flag:
@@ -163,8 +216,9 @@ class AIService:
             referral_tier = "telemedicine"
 
         return {
-            "diet": diet_recs,
-            "lifestyle": ["Prioritize 7-9 hours of sleep", "Manage stress through mindfulness"],
+            "high_priority": list(high_priority),
+            "lifestyle": list(lifestyle),
+            "diet": list(diet),
             "referral_tier": referral_tier,
             "referral_trigger": referral_trigger,
             "emergency_flag": emergency_flag
