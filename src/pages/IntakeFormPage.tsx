@@ -149,14 +149,16 @@ export default function IntakeFormPage() {
           setAssessment(null);
           setRecommendations(null);
           setFormData(null);
+          setLoading(false);
+          navigate('/assessment/' + data.id);
+          return;
         }
       }
     } catch (e) {
       console.error('Failed to save assessment:', e);
-    } finally {
-      setLoading(false);
-      navigate('/dashboard');
-    }
+    } 
+    setLoading(false);
+    navigate('/dashboard');
   };
 
   const canProceed = () => {
