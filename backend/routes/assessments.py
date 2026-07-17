@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile
 from sqlalchemy.orm import Session
 from typing import Annotated, List
 
 import models, schemas, database
 from routes.auth import get_current_user
 from services.assessment_service import AssessmentService
+from services.pdf_service import PdfService
 
 router = APIRouter(prefix="/api/assessments", tags=["assessments"])
 
@@ -62,3 +63,29 @@ def delete_assessment(
     """Deletes a specific assessment, verifying ownership."""
     AssessmentService.delete_assessment(db, current_user, assessment_id)
     return None
+
+@router.post("/upload", status_code=status.HTTP_200_OK)
+async def upload_and_parse_report(
+    file: UploadFile = File(...),
+    current_user: models.User = Depends(get_current_user)
+):
+    """Parses a PDF report, extracts biomarkers, and validates them."""
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are supported. Please upload a .pdf lab report.")
+        
+    try:
+        content = await file.read()
+        extracted = PdfService.extract_biomarkers(content)
+        
+        # Validation: TSH is mandatory for any thyroid assessment
+        if 'tsh' not in extracted:
+            raise HTTPException(
+                status_code=422, 
+                detail="We couldn't confidently extract the thyroid values (TSH) from this report. Please upload a clearer PDF or enter the values manually."
+            )
+            
+        return {"extracted": extracted, "filename": file.filename}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process report: {str(e)}")

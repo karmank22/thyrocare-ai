@@ -46,6 +46,48 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(!ctxAssessment);
   const [hasRecord, setHasRecord] = useState(!!ctxAssessment);
 
+  const handleUploadComplete = async (extractedData: any) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('thyrocare_token');
+      // Merge extracted values, using defaults for any missing data required by the API
+      const payload = {
+        age: currentUser?.age || 35,
+        sex: currentUser?.gender === 'Male' ? 1 : 0,
+        on_thyroxine: false,
+        on_antithyroid_meds: false,
+        sick: false,
+        pregnant: false,
+        thyroid_surgery: false,
+        I131_treatment: false,
+        lithium: false,
+        goitre: false,
+        tumor: false,
+        hypopituitary: false,
+        psych: false,
+        tsh: parseFloat(extractedData.tsh) || 2.5,
+        t3: parseFloat(extractedData.t3) || 2.0,
+        tt4: parseFloat(extractedData.t4) || 100,
+        t4u: 1.0,
+        fti: 100
+      };
+
+      const res = await fetch(`${API_BASE_URL}/api/assessments/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        // Simple reload to refresh the dashboard with the new record
+        window.location.reload();
+      }
+    } catch (e) {
+      console.error('Failed to save assessment', e);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchRecord = async () => {
       if (ctxAssessment && trendData.length > 0) {
@@ -221,7 +263,7 @@ export default function DashboardPage() {
                 Upload your first lab report to generate your personalized AI assessment.
               </p>
               <div style={{ maxWidth: '400px', margin: '0 auto' }}>
-                <ReportUpload />
+                <ReportUpload onUploadComplete={handleUploadComplete} />
               </div>
               <p style={{ margin: 'var(--space-lg) 0' }}>OR</p>
               <button className="btn btn-primary" onClick={() => navigate('/screening')}>
@@ -258,7 +300,7 @@ export default function DashboardPage() {
               <div className="dashboard-row-top">
                 <HealthStatusSummary assessment={assessment} />
                 <GenAIExplanation explanation={explanation} language={language} riskClass={assessment.risk_class} />
-                <ReportUpload />
+                <ReportUpload onUploadComplete={handleUploadComplete} />
               </div>
 
               {/* Row 2: Recommendations (wide) + TSH Chart */}
