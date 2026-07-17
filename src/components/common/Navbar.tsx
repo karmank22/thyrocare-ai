@@ -74,6 +74,9 @@ export default function Navbar() {
               <Link to="/worker/history" className={`navbar-link ${isActive('/worker/history') ? 'active' : ''}`}>
                 Assessment History
               </Link>
+              <Link to="/profile" className={`navbar-link ${isActive('/profile') ? 'active' : ''}`}>
+                Profile
+              </Link>
             </>
           )}
         </div>
