@@ -51,10 +51,6 @@ export default function ReportUpload() {
           <div className="upload-icon">📋</div>
           <div className="upload-title">Drop lab report here</div>
           <div className="upload-subtitle">PDF · JPG · PNG</div>
-          <div className="upload-method-tags">
-            <span className="tag">PyMuPDF</span>
-            <span className="tag">Tesseract OCR</span>
-          </div>
         </div>
       ) : parsing ? (
         <div className="parsing-state">
