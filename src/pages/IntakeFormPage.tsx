@@ -89,6 +89,12 @@ export default function IntakeFormPage() {
     }
   };
 
+  const handleNumericKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (['e', 'E', '+', '-'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   const handleVoiceInput = () => {
     const SpeechRecognition = (window as Window & { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition ||
       (window as Window & { SpeechRecognition?: typeof window.SpeechRecognition }).SpeechRecognition;
@@ -216,6 +222,7 @@ export default function IntakeFormPage() {
                     placeholder="e.g. 32"
                     value={form.age}
                     onChange={e => updateField('age', e.target.value)}
+                    onKeyDown={handleNumericKeyDown}
                     id="field-age"
                   />
                 </div>
@@ -227,6 +234,7 @@ export default function IntakeFormPage() {
                     placeholder="e.g. 24.5"
                     value={form.bmi}
                     onChange={e => updateField('bmi', e.target.value)}
+                    onKeyDown={handleNumericKeyDown}
                     id="field-bmi"
                   />
                 </div>
@@ -285,7 +293,7 @@ export default function IntakeFormPage() {
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">{t('intake.tsh')}</label>
-                  <input type="number" min="0" max="50" step="0.1" className="form-input" placeholder="e.g. 3.2" value={form.tsh} onChange={e => updateField('tsh', e.target.value)} id="field-tsh" />
+                  <input type="number" min="0" max="50" step="0.1" className="form-input" placeholder="e.g. 3.2" value={form.tsh} onChange={e => updateField('tsh', e.target.value)} onKeyDown={handleNumericKeyDown} id="field-tsh" />
                   {form.tsh && parseFloat(form.tsh) > 4.5 && (
                     <span className="field-warning">⚠️ Above ICMR normal range (0.5–4.5)</span>
                   )}
@@ -295,13 +303,13 @@ export default function IntakeFormPage() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">{t('intake.t3')}</label>
-                  <input type="number" min="0" max="20" step="0.1" className="form-input" placeholder="e.g. 3.1" value={form.t3} onChange={e => updateField('t3', e.target.value)} id="field-t3" />
+                  <input type="number" min="0" max="20" step="0.1" className="form-input" placeholder="e.g. 3.1" value={form.t3} onChange={e => updateField('t3', e.target.value)} onKeyDown={handleNumericKeyDown} id="field-t3" />
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">{t('intake.t4')}</label>
-                  <input type="number" min="0" max="20" step="0.1" className="form-input" placeholder="e.g. 1.2" value={form.t4} onChange={e => updateField('t4', e.target.value)} id="field-t4" />
+                  <input type="number" min="0" max="30" step="0.1" className="form-input" placeholder="e.g. 1.1" value={form.t4} onChange={e => updateField('t4', e.target.value)} onKeyDown={handleNumericKeyDown} id="field-t4" />
                 </div>
                 <div className="form-group">
                   <label className="form-label">{t('intake.severity_score')}: <strong>{form.severity_score}/10</strong></label>
