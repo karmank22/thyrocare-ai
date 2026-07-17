@@ -126,6 +126,9 @@ export default function WorkerHistoryPage() {
     return matchesSearch && matchesRisk && matchesDate;
   });
 
+  const highRiskCount = assessments.filter(a => a.risk_class === 'High' || a.risk_class === 'Critical').length;
+  const pendingReferrals = assessments.filter(a => (a.risk_class === 'High' || a.risk_class === 'Critical' || a.risk_class === 'Moderate') && a.referral_status === 'Not Referred').length;
+
   return (
     <div className="worker-dashboard">
       <Navbar />
@@ -135,21 +138,31 @@ export default function WorkerHistoryPage() {
           <button className="btn btn-primary" onClick={() => navigate('/worker')}>+ New Screening</button>
         </div>
 
-        {offlineCount > 0 && (
-          <div className="glass-card" style={{ marginBottom: 'var(--space-lg)', borderColor: 'var(--risk-mild)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h3 style={{ margin: 0 }}>Offline Queue</h3>
-                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>You have {offlineCount} screenings waiting to be synced to the server.</p>
-              </div>
-              <button className="btn btn-secondary" onClick={handleSync} disabled={syncing}>
+        <div className="stats-grid">
+          <div className="stat-card">
+            <h3>Total Screened</h3>
+            <div className="stat-value">{assessments.length}</div>
+          </div>
+          <div className="stat-card" style={{ borderColor: 'var(--risk-high)' }}>
+            <h3>High Risk</h3>
+            <div className="stat-value" style={{ color: 'var(--risk-high)' }}>{highRiskCount}</div>
+          </div>
+          <div className="stat-card" style={{ borderColor: 'var(--risk-moderate)' }}>
+            <h3>Pending Referrals</h3>
+            <div className="stat-value" style={{ color: 'var(--risk-moderate)' }}>{pendingReferrals}</div>
+          </div>
+          <div className="stat-card" style={{ borderColor: offlineCount > 0 ? 'var(--risk-mild)' : 'var(--border-color)' }}>
+            <h3>Offline Queue</h3>
+            <div className="stat-value">{offlineCount}</div>
+            {offlineCount > 0 && (
+              <button className="btn btn-secondary btn-sm" onClick={handleSync} disabled={syncing} style={{ marginTop: '10px' }}>
                 {syncing ? 'Syncing...' : 'Sync Now'}
               </button>
-            </div>
+            )}
           </div>
-        )}
+        </div>
 
-        <div className="glass-card">
+        <div className="glass-card" style={{ marginTop: 'var(--space-lg)' }}>
           <div style={{ display: 'flex', gap: 'var(--space-md)', marginBottom: 'var(--space-md)' }}>
             <input 
               type="text" 
