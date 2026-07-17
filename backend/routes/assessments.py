@@ -75,6 +75,9 @@ async def upload_and_parse_report(
         
     try:
         content = await file.read()
+        if len(content) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="File too large. Maximum allowed size is 5MB.")
+            
         extracted = PdfService.extract_biomarkers(content)
         
         # Validation: TSH is mandatory for any thyroid assessment
