@@ -51,14 +51,41 @@ export default function IntakeFormPage() {
     setForm(prev => ({ ...prev, [key]: !prev[key as keyof typeof prev] }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setUploaded(file.name);
-      // Simulate OCR extraction — set realistic TSH for demo
-      if (!form.tsh) updateField('tsh', '5.8');
-      if (!form.t3) updateField('t3', '3.1');
-      if (!form.t4) updateField('t4', '1.1');
+      if (file.type !== 'application/pdf') {
+        alert("Only PDF files are supported");
+        return;
+      }
+      setUploaded('Uploading and extracting...');
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      const token = localStorage.getItem('thyrocare_token');
+      
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/assessments/upload`, {
+          method: 'POST',
+          headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+          body: formData,
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+           throw new Error(data.detail || 'Failed to process report');
+        }
+        
+        const extracted = data.extracted;
+        setUploaded(file.name);
+        if (extracted.tsh) updateField('tsh', extracted.tsh.toString());
+        if (extracted.t3) updateField('t3', extracted.t3.toString());
+        if (extracted.t4) updateField('t4', extracted.t4.toString());
+      } catch (err: any) {
+         alert(err.message);
+         setUploaded('');
+      }
     }
   };
 
@@ -233,7 +260,7 @@ export default function IntakeFormPage() {
                       <span>✅</span>
                       <div>
                         <div className="upload-filename">{uploaded}</div>
-                        <div className="upload-note">AI extracted: TSH={form.tsh}, T3={form.t3}, T4={form.t4} (demo values)</div>
+                        <div className="upload-note">AI extracted: TSH={form.tsh}, T3={form.t3}, T4={form.t4}</div>
                       </div>
                     </div>
                   ) : (
